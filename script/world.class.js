@@ -48,6 +48,12 @@ class World {
         if (this.keyboard.left) {
             this.character.moveLeft();
         }
+        if (this.keyboard.up) {
+            this.character.jump();
+        }
+        if (this.keyboard.attack) {
+            this.character.attack();
+        }
 
         this.character.updateAnimation();
         this.clouds.moveClouds();
