@@ -1,0 +1,23 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #222;
+    font-family: Arial, sans-serif;
+}
+
+canvas {
+    border: 3px solid #333;
+    background-image: url(./img/5_background/layers/air.png);
+    display: block;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    max-width: 100%;
+    height: auto;
+}
