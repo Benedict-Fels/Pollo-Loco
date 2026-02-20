@@ -7,7 +7,7 @@ class Character extends DrawableObject {
     isWalking = false;
     direction = 'right';
     movingDirection = 0;
-    currentAnimationFrame;
+    currentAnimationFrame = 0;
     idleImages = [
         'img/2_character_pepe/1_idle/idle/I-1.png',
         'img/2_character_pepe/1_idle/idle/I-2.png',
@@ -38,21 +38,18 @@ class Character extends DrawableObject {
         'img/2_character_pepe/3_jump/J-39.png',
     ];
     attackImages = [
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-        'img/2_character_pepe/6_attack/frame_000_adjusted.png',
-    ];
+        'img/2_character_pepe/6_attack/A-1.png',
+        'img/2_character_pepe/6_attack/A-2.png',
+        'img/2_character_pepe/6_attack/A-3.png',
+        'img/2_character_pepe/6_attack/A-4.png',
+        'img/2_character_pepe/6_attack/A-5.png',
+        'img/2_character_pepe/6_attack/A-6.png',
+        'img/2_character_pepe/6_attack/A-7.png',
+        'img/2_character_pepe/6_attack/A-8.png',
+        'img/2_character_pepe/6_attack/A-9.png',
+        'img/2_character_pepe/6_attack/A-10.png',
+    ]
+
     animationCounter = 0;
 
     constructor() {
@@ -67,6 +64,7 @@ class Character extends DrawableObject {
         this.loadImages(this.walkImages);
         this.loadImages(this.jumpImages);
         this.loadImages(this.attackImages);
+        this.updateAnimation()
         this.applyGravity();
 
         this.img = this.imageCache[this.idleImages[0]];
@@ -93,7 +91,6 @@ class Character extends DrawableObject {
         if (!this.isJumping) {
             this.speedY = 22;
             this.isJumping = true;
-            this.currentAnimationFrame = 0;
             this.animationTimer = 0;
         }
     }
@@ -101,26 +98,36 @@ class Character extends DrawableObject {
     attack() {
         if (!this.isAttacking) {
             this.isAttacking = true;
-            this.currentAnimationFrame = 0;
             this.animationTimer = 0;
         }
-        setTimeout(() => {
-            this.isAttacking = false;
-        }, 2000);
     }
 
     updateAnimation() {
         let imagesToUse = this.checkAnimation();
 
         if (this.isWalking !== this.wasWalkingLastFrame) {
-            this.currentAnimationFrame = 0;
             this.animationTimer = 0;
         }
         this.wasWalkingLastFrame = this.isWalking;
+        if (this.isAttacking) {
+            this.characterAnimation(imagesToUse, 10);
+        } else {
+            this.characterAnimation(imagesToUse, 20);
+        }
+        if (this.isAttacking) {
+            if (this.currentAnimationFrame >= this.attackImages.length - 1) {
+                this.isAttacking = false;
+                this.currentAnimationFrame = 0;
+                this.animationTimer = 0;
+                imagesToUse = this.checkAnimation();
+            }
+        }
+    }
 
+    characterAnimation(imagesToUse, timer = 20) {
         this.animationTimer = (this.animationTimer || 0) + 1;
-        if (this.animationTimer % 20 !== 0) return;
-        this.currentAnimationFrame = ((this.animationTimer / 20));
+        if (this.animationTimer % timer !== 0) return;
+        this.currentAnimationFrame = ((this.animationTimer / timer));
         let i = (this.currentAnimationFrame % imagesToUse.length);
         let path = imagesToUse[i];
         this.img = this.imageCache[path];
@@ -129,25 +136,29 @@ class Character extends DrawableObject {
     checkAnimation() {
         if (this.isJumping) {
             return this.imagesToUse = this.jumpImages;
-        } else if (this.isWalking) {
-            return this.imagesToUse = this.walkImages;
         } else if (this.isAttacking) {
             return this.imagesToUse = this.attackImages;
+        } else if (this.isWalking) {
+            return this.imagesToUse = this.walkImages;
         } else {
             return this.imagesToUse = this.idleImages;
         }
     }
 
     moveLeft() {
-        this.movingDirection = -1;
-        this.direction = 'left';
-        this.isWalking = true;
+        if (!this.isAttacking) {
+            this.movingDirection = -1;
+            this.direction = 'left';
+            this.isWalking = true;
+        }
     }
 
     moveRight() {
-        this.movingDirection = 1;
-        this.direction = 'right';
-        this.isWalking = true;
+        if (!this.isAttacking) {
+            this.movingDirection = 1;
+            this.direction = 'right';
+            this.isWalking = true;
+        }
     }
 
     stopWalking() {
