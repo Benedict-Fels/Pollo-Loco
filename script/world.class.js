@@ -29,6 +29,7 @@ class World {
 
     initializeWorld() {
         this.character = new Character();
+        this.chicken = new Chicken();
         this.backgrounds = this.layerPaths.map(layer => {
             let bg = new Background(
                 `img/5_background/layers/${layer.name}/full.png`,
@@ -56,8 +57,10 @@ class World {
         }
 
         this.character.updateAnimation();
+        this.chicken.chickenAnimation();
         this.clouds.moveClouds();
         this.cameraOffset += this.character.movingDirection * this.character.speed;
+        this.chicken.moveChicken(this.cameraOffset);
     }
 
     draw() {
@@ -68,6 +71,7 @@ class World {
         });
         this.character.updateAnimation();
         this.character.draw(this.ctx);
+        this.chicken.draw(this.ctx);
     }
 
     gameLoop() {

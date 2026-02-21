@@ -110,7 +110,7 @@ class Character extends DrawableObject {
         }
         this.wasWalkingLastFrame = this.isWalking;
         if (this.isAttacking) {
-            this.characterAnimation(imagesToUse, 10);
+            this.characterAnimation(imagesToUse, 7);
         } else {
             this.characterAnimation(imagesToUse, 20);
         }
