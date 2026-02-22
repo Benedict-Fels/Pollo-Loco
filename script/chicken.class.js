@@ -1,7 +1,7 @@
 
 
 class Chicken extends DrawableObject {
-    speed = 5;
+    speed = 3;
     direction = 'left';
     currentAnimationFrame = 0;
     chickenDistance = 0;
@@ -22,6 +22,7 @@ class Chicken extends DrawableObject {
         this.y = 370;
         this.width = 100;
         this.height = 100;
+        this.collisionOffset = { top: 20, left: 20, right: 20, bottom: 10 };
 
         this.loadImages(this.walkImages);
         this.img = this.imageCache[this.walkImages[0]];
@@ -29,8 +30,8 @@ class Chicken extends DrawableObject {
 
     chickenAnimation() {
         this.animationTimer = (this.animationTimer || 0) + 1;
-        if (this.animationTimer % 10 !== 0) return;
-        this.currentAnimationFrame = ((this.animationTimer / 10));
+        if (this.animationTimer % 20 !== 0) return;
+        this.currentAnimationFrame = ((this.animationTimer / 20));
         let i = (this.currentAnimationFrame % this.walkImages.length);
         let path = this.walkImages[i];
         this.img = this.imageCache[path];

@@ -1,14 +1,13 @@
 class Clouds extends DrawableObject {
 
-    constructor() {
+    constructor(width, height) {
         super();
         this.x = 36;
         this.y = 0;
-        this.width = 960;
-        this.height = 400;
+        this.width = width;
+        this.height = height - 140;
         this.speed = 0.2;
         this.loadImage('./img/5_background/layers/4_clouds/1.png');
-        this.img = this.imageCache['./img/5_background/layers/4_clouds/1.png'];
     }
 
     moveClouds() {

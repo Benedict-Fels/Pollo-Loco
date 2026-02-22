@@ -3,24 +3,29 @@ class KeyboardInput {
     left = false;
     up = false;
     down = false;
+    throw = false
+    attack = false;
+    canvas = document.getElementById('canvasID');
 
     constructor() {
         document.addEventListener('keydown', (e) => this.handleKeyDown(e));
         document.addEventListener('keyup', (e) => this.handleKeyUp(e));
-        document.addEventListener('mousedown', (e) => this.handleLeftMouseDown(e));
-        document.addEventListener('mouseup', (e) => this.handleLeftMouseUp(e));
+        this.canvas.addEventListener('mousedown', (e) => this.handleLeftMouseDown(e));
+        this.canvas.addEventListener('mouseup', (e) => this.handleLeftMouseUp(e));
     }
 
     handleKeyDown(e) {
         if (e.key === 'ArrowRight' || e.key === 'd') this.right = true;
         if (e.key === 'ArrowLeft' || e.key === 'a') this.left = true;
         if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') this.up = true;
+        if (e.key === 'q') this.throw = true;
     }
 
     handleKeyUp(e) {
         if (e.key === 'ArrowRight' || e.key === 'd') this.right = false;
         if (e.key === 'ArrowLeft' || e.key === 'a') this.left = false;
         if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') this.up = false;
+        if (e.key === 'q') this.throw = false;
     }
 
     handleLeftMouseDown(e) {

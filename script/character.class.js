@@ -5,9 +5,12 @@ class Character extends DrawableObject {
     acceleration = 2;
     isJumping = false;
     isWalking = false;
+    isThrowing = false;
+    isAttacking = false;
     direction = 'right';
     movingDirection = 0;
     currentAnimationFrame = 0;
+
     idleImages = [
         'img/2_character_pepe/1_idle/idle/I-1.png',
         'img/2_character_pepe/1_idle/idle/I-2.png',
@@ -17,7 +20,8 @@ class Character extends DrawableObject {
         'img/2_character_pepe/1_idle/idle/I-6.png',
         'img/2_character_pepe/1_idle/idle/I-7.png',
         'img/2_character_pepe/1_idle/idle/I-9.png',
-        'img/2_character_pepe/1_idle/idle/I-10.png',];
+        'img/2_character_pepe/1_idle/idle/I-10.png',
+    ];
     walkImages = [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
@@ -50,6 +54,17 @@ class Character extends DrawableObject {
         'img/2_character_pepe/6_attack/A-10.png',
     ]
 
+    throwImages = [
+        'img/2_character_pepe/6_attack/A-1.png',
+        'img/2_character_pepe/6_attack/A-2.png',
+        'img/2_character_pepe/6_attack/A-3.png',
+        'img/2_character_pepe/6_attack/A-4.png',
+        'img/2_character_pepe/6_attack/A-5.png',
+        'img/2_character_pepe/6_attack/A-6.png',
+        'img/2_character_pepe/6_attack/A-7.png',
+
+    ]
+
     animationCounter = 0;
 
     constructor() {
@@ -59,12 +74,14 @@ class Character extends DrawableObject {
         this.width = 100;
         this.height = 200;
         this.speedY = 0;
+        this.collisionOffset = { top: 100, left: 20, right: 30, bottom: 10 };
 
         this.loadImages(this.idleImages);
         this.loadImages(this.walkImages);
         this.loadImages(this.jumpImages);
         this.loadImages(this.attackImages);
-        this.updateAnimation()
+        this.loadImages(this.throwImages);
+        this.updateAnimation();
         this.applyGravity();
 
         this.img = this.imageCache[this.idleImages[0]];
@@ -96,8 +113,15 @@ class Character extends DrawableObject {
     }
 
     attack() {
-        if (!this.isAttacking) {
+        if (!this.isAttacking && !this.isJumping) {
             this.isAttacking = true;
+            this.animationTimer = 0;
+        }
+    }
+
+    throwBottle() {
+        if (!this.isAttacking && !this.isJumping) {
+            this.isThrowing = true;
             this.animationTimer = 0;
         }
     }
@@ -109,20 +133,32 @@ class Character extends DrawableObject {
             this.animationTimer = 0;
         }
         this.wasWalkingLastFrame = this.isWalking;
-        if (this.isAttacking) {
+        if (this.isAttacking || this.isThrowing) {
             this.characterAnimation(imagesToUse, 7);
         } else {
             this.characterAnimation(imagesToUse, 20);
         }
-        if (this.isAttacking) {
-            if (this.currentAnimationFrame >= this.attackImages.length - 1) {
+        if (this.isAttacking || this.isThrowing) {
+            if (this.currentAnimationFrame >= this.imagesToUse.length - 1) {
                 this.isAttacking = false;
-                this.currentAnimationFrame = 0;
+                if (this.isThrowing) {
+                    this.spawnBottle();
+                    this.isThrowing = false;
+                }
                 this.animationTimer = 0;
                 imagesToUse = this.checkAnimation();
             }
         }
     }
+
+    spawnBottle() {
+    let bottle = new ThrowableObject(
+        this.x + (this.direction === 'right' ? 50 : 0), 
+        this.y + 50, 
+        this.direction
+    );
+    this.world.throwableObjects.push(bottle); 
+}
 
     characterAnimation(imagesToUse, timer = 20) {
         this.animationTimer = (this.animationTimer || 0) + 1;
@@ -136,6 +172,8 @@ class Character extends DrawableObject {
     checkAnimation() {
         if (this.isJumping) {
             return this.imagesToUse = this.jumpImages;
+        } else if (this.isThrowing) {
+            return this.imagesToUse = this.throwImages;
         } else if (this.isAttacking) {
             return this.imagesToUse = this.attackImages;
         } else if (this.isWalking) {
@@ -150,6 +188,7 @@ class Character extends DrawableObject {
             this.movingDirection = -1;
             this.direction = 'left';
             this.isWalking = true;
+            this.collisionOffset = { top: 100, left: 30, right: 20, bottom: 10 };
         }
     }
 
@@ -158,6 +197,7 @@ class Character extends DrawableObject {
             this.movingDirection = 1;
             this.direction = 'right';
             this.isWalking = true;
+            this.collisionOffset = { top: 100, left: 20, right: 30, bottom: 10 };
         }
     }
 
