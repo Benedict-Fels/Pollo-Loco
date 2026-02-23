@@ -22,7 +22,7 @@ class Background extends DrawableObject {
     }
 
     draw(ctx, cameraOffset) {
-        let x = -(cameraOffset * this.parallaxFactor) % this.width;
+        let x = (cameraOffset * this.parallaxFactor) % this.width;
         ctx.drawImage(this.img, x, 0, this.width, this.height);
         ctx.drawImage(this.img, x + this.width, 0, this.width, this.height);
         ctx.drawImage(this.img, x - this.width, 0, this.width, this.height);

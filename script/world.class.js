@@ -12,6 +12,7 @@ class World {
         { name: '1_first_layer', parallax: 1.0 }
     ];
     throwableObjects = [];
+    enemies = [];
 
     WIDTH = 960;
     HEIGHT = 540;
@@ -30,7 +31,6 @@ class World {
 
     initializeWorld() {
         this.character = new Character();
-        this.chicken = new Chicken();
         this.character.world = this;
         this.backgrounds = this.layerPaths.map(layer => {
             let bg = new Background(
@@ -51,40 +51,62 @@ class World {
         if (this.keyboard.throw) this.character.throwBottle();
 
         this.character.updateAnimation();
-        this.chicken.chickenAnimation();
+        this.enemies.forEach(enemy => {
+            enemy.chickenAnimation();
+            enemy.moveChicken();
+        });
         this.clouds.moveClouds();
-        this.cameraOffset += this.character.movingDirection * this.character.speed;
-        this.chicken.moveChicken(this.cameraOffset);
+        this.cameraOffset = 100 - this.character.x;
+
+        this.checkFirstMovement();
+
         this.checkThrowObjects();
         this.checkCollisions();
         this.cleanUpObjects();
     }
 
+    checkFirstMovement() {
+        if (this.character.movingDirection !== 0 && !this.character.isPlaying) {
+            this.character.isPlaying = true;
+            this.startLevel();
+        }
+    }
+
+    startLevel() {
+        for (let i = 0; i < 3; i++) {
+            let xPos = 2000 + (i * 500);
+            this.enemies.push(new Chicken(xPos));
+        }
+    }
+
     checkThrowObjects() {
-        if (this.keyboard.D && !this.character.isThrowing && !this.character.isJumping) {
+        if (this.keyboard.throw && !this.character.isThrowing && !this.character.isJumping) {
             this.character.throwBottle();
-            this.keyboard.D = false;
+            this.keyboard.throw = false;
         }
     }
 
     checkCollisions() {
-        if (this.character.isColliding(this.chicken) && !this.character.isAttacking) {
-            console.log('Kollision mit Chicken!');
-        }
-        if (this.character.isAttacking && this.character.isColliding(this.chicken)) {
-            this.chicken.isDead = true;
-            console.log('Chicken wurde attackiert');
-            
-        }
-        if (this.throwableObjects.some(obj => obj.isColliding(this.chicken))) {
-            console.log('Chicken wurde getroffen!');
-            this.chicken.isDead = true;
-        }
+        this.enemies.forEach((enemy) => {
+            if (this.character.isColliding(enemy) && !this.character.isAttacking && !enemy.isDead) {
+                this.character.recieveDamage()
+            }
+            if (this.character.isAttacking && this.character.isColliding(enemy)) {
+                enemy.isDead = true;
+                console.log('Chicken wurde attackiert');
+
+            }
+            if (this.throwableObjects.some(obj => obj.isColliding(enemy) && !obj.isGone && !obj.isSplashing)) {
+                console.log('Chicken wurde getroffen!');
+                enemy.isDead = true;
+            }
+        });
     }
 
     cleanUpObjects() {
-    this.throwableObjects = this.throwableObjects.filter(obj => !obj.isGone);
-}
+        this.throwableObjects = this.throwableObjects.filter(obj => !obj.isGone);
+        this.enemies = this.enemies.filter(chicken => !chicken.isGone);
+    }
 
     draw() {
         this.ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT);
@@ -93,10 +115,12 @@ class World {
             bg.draw(this.ctx, this.cameraOffset);
         });
         this.character.updateAnimation();
-        this.character.draw(this.ctx);
-        this.character.drawHitbox(this.ctx);
-        this.chicken.draw(this.ctx);
-        this.chicken.drawHitbox(this.ctx);
+        this.character.drawManual(this.ctx, this.cameraOffset);
+        this.character.drawHitbox(this.ctx, this.cameraOffset);
+        this.enemies.forEach(chicken => {     
+            chicken.drawManual(this.ctx, this.cameraOffset);
+            chicken.drawHitbox(this.ctx, this.cameraOffset);
+        });
         this.throwableObjects.forEach(obj => {
             obj.draw(this.ctx, this.cameraOffset);
             obj.drawHitbox(this.ctx, this.cameraOffset);

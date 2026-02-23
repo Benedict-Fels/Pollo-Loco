@@ -90,10 +90,22 @@ class ThrowableObject extends DrawableObject {
     }
 
     draw(ctx, cameraOffset) {
-        if (!this.throwLocationX) {
-            this.throwLocationX = cameraOffset;
-        }
-        this.updatedX = this.x + this.throwLocationX - cameraOffset;
-        ctx.drawImage(this.img, this.updatedX, this.y, this.width, this.height);
+        ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
     }
+
+    drawHitbox(ctx, cameraOffset) {
+        if (!this.isSplashing) {
+            ctx.beginPath();
+            ctx.lineWidth = '2';
+            ctx.strokeStyle = 'blue';
+            ctx.rect(
+                this.x + this.collisionOffset.left + cameraOffset,
+                this.y + this.collisionOffset.top,
+                this.width - this.collisionOffset.left - this.collisionOffset.right,
+                this.height - this.collisionOffset.top - this.collisionOffset.bottom
+            );
+            ctx.stroke();
+        }
+    }
+ 
 }

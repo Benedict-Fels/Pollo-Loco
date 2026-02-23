@@ -7,7 +7,10 @@ class Character extends DrawableObject {
     isWalking = false;
     isThrowing = false;
     isAttacking = false;
+    invincibility = false;
+    isPlaying = false;
     direction = 'right';
+    health = 10;
     movingDirection = 0;
     currentAnimationFrame = 0;
 
@@ -154,14 +157,24 @@ class Character extends DrawableObject {
     }
 
     spawnBottle() {
-    let bottle = new ThrowableObject(
-        this.x + (this.direction === 'right' ? 50 : 0), 
-        this.y + 50, 
-        this.direction, 
-        this.x
-    );
-    this.world.throwableObjects.push(bottle); 
-}
+        let bottle = new ThrowableObject(
+            this.x + (this.direction === 'right' ? 50 : 0),
+            this.y + 50,
+            this.direction,
+            this.x
+        );
+        this.world.throwableObjects.push(bottle);
+    }
+
+    recieveDamage() {
+        if (this.invincibility) return;
+        this.health -= 1;
+        console.log(`Character health: ${this.health}`);
+        this.invincibility = true;
+        setTimeout(() => {
+            this.invincibility = false;
+        }, 1000);
+    }
 
     characterAnimation(imagesToUse, timer = 20) {
         this.animationTimer = (this.animationTimer || 0) + 1;
@@ -190,6 +203,7 @@ class Character extends DrawableObject {
         if (!this.isAttacking) {
             this.movingDirection = -1;
             this.direction = 'left';
+            this.x -= this.speed;
             this.isWalking = true;
             this.collisionOffset = { top: 100, left: 30, right: 20, bottom: 10 };
         }
@@ -199,6 +213,7 @@ class Character extends DrawableObject {
         if (!this.isAttacking) {
             this.movingDirection = 1;
             this.direction = 'right';
+            this.x += this.speed;
             this.isWalking = true;
             this.collisionOffset = { top: 100, left: 20, right: 30, bottom: 10 };
         }
@@ -211,15 +226,23 @@ class Character extends DrawableObject {
         this.animationCounter = 0;
     }
 
-    draw(ctx) {
-        if (this.direction === 'left') {
-            ctx.save();
-            ctx.translate(this.x + this.width / 2, this.y);
-            ctx.scale(-1, 1);
-            ctx.drawImage(this.img, -this.width / 2, 0, this.width, this.height);
-            ctx.restore();
-        } else {
-            ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
-        }
+    drawManual(ctx, cameraOffset) {
+    if (this.direction === 'left') {
+        ctx.save();
+        ctx.translate(this.x + cameraOffset + this.width / 2, this.y);
+        ctx.scale(-1, 1);
+        ctx.drawImage(this.img, -this.width / 2, 0, this.width, this.height);
+        ctx.restore();
+    } else {
+        ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
+    }
+}
+
+    drawHitbox(ctx, cameraOffset) {
+        ctx.beginPath();
+        ctx.rect(this.x + this.collisionOffset.left + cameraOffset, this.y + this.collisionOffset.top,
+            this.width - this.collisionOffset.left - this.collisionOffset.right,
+            this.height - this.collisionOffset.top - this.collisionOffset.bottom);
+        ctx.stroke();
     }
 }
