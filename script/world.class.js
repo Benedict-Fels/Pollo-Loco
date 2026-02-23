@@ -68,8 +68,17 @@ class World {
     }
 
     checkCollisions() {
-        if (this.character.isColliding(this.chicken)) {
+        if (this.character.isColliding(this.chicken) && !this.character.isAttacking) {
             console.log('Kollision mit Chicken!');
+        }
+        if (this.character.isAttacking && this.character.isColliding(this.chicken)) {
+            this.chicken.isDead = true;
+            console.log('Chicken wurde attackiert');
+            
+        }
+        if (this.throwableObjects.some(obj => obj.isColliding(this.chicken))) {
+            console.log('Chicken wurde getroffen!');
+            this.chicken.isDead = true;
         }
     }
 
@@ -89,8 +98,8 @@ class World {
         this.chicken.draw(this.ctx);
         this.chicken.drawHitbox(this.ctx);
         this.throwableObjects.forEach(obj => {
-            obj.draw(this.ctx);
-            obj.drawHitbox(this.ctx);
+            obj.draw(this.ctx, this.cameraOffset);
+            obj.drawHitbox(this.ctx, this.cameraOffset);
         });
     }
 

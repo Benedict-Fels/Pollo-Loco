@@ -1,6 +1,6 @@
 
 class DrawableObject {
-    x = 0;
+    // x = 0;
     y = 0;
     width = 0;
     height = 0;
@@ -35,6 +35,10 @@ class DrawableObject {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }
 
+    // drawManual(ctx, cameraOffset) {
+    //     ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
+    // }
+
     isColliding(enemy) {
         return this.x + this.width - this.collisionOffset.right > enemy.x + enemy.collisionOffset.left &&
             this.y + this.height - this.collisionOffset.bottom > enemy.y + enemy.collisionOffset.top &&
@@ -48,7 +52,7 @@ class DrawableObject {
             ctx.lineWidth = '2';
             ctx.strokeStyle = 'red';
             ctx.rect(
-                this.x + this.collisionOffset.left,
+                this.updatedX ? this.updatedX + this.collisionOffset.left : this.x + this.collisionOffset.left,
                 this.y + this.collisionOffset.top,
                 this.width - this.collisionOffset.left - this.collisionOffset.right,
                 this.height - this.collisionOffset.top - this.collisionOffset.bottom

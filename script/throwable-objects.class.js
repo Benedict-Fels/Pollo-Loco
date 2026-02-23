@@ -7,9 +7,9 @@ class ThrowableObject extends DrawableObject {
 
     spinningBottleImages = [
         'img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
-        'img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png',
-        'img/6_salsa_bottle/bottle_rotation/3_bottle_rotation.png',
         'img/6_salsa_bottle/bottle_rotation/4_bottle_rotation.png',
+        'img/6_salsa_bottle/bottle_rotation/3_bottle_rotation.png',
+        'img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png',
     ]
 
     splashBottleImages = [
@@ -22,11 +22,13 @@ class ThrowableObject extends DrawableObject {
     ]
 
     constructor(x, y, direction) {
-        super()
+        super();
         this.loadImages(this.spinningBottleImages);
         this.loadImages(this.splashBottleImages);
         this.img = this.imageCache[this.spinningBottleImages[0]];
-        this.x = x;
+        if (!this.x) {
+            this.x = x;
+        }
         this.y = y;
         this.height = 60;
         this.width = 50;
@@ -43,6 +45,7 @@ class ThrowableObject extends DrawableObject {
                 return;
             }
             if (this.direction === 'right') {
+                // this.x = (this.x || this.throwLocationX) + this.speedX;
                 this.x += this.speedX;
             } else {
                 this.x -= this.speedX;
@@ -84,5 +87,13 @@ class ThrowableObject extends DrawableObject {
         if (this.currentAnimationFrame >= this.splashBottleImages.length - 1) {
             this.isGone = true;
         }
+    }
+
+    draw(ctx, cameraOffset) {
+        if (!this.throwLocationX) {
+            this.throwLocationX = cameraOffset;
+        }
+        this.updatedX = this.x + this.throwLocationX - cameraOffset;
+        ctx.drawImage(this.img, this.updatedX, this.y, this.width, this.height);
     }
 }

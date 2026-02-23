@@ -114,6 +114,7 @@ class Character extends DrawableObject {
 
     attack() {
         if (!this.isAttacking && !this.isJumping) {
+            this.collisionOffset[this.direction] = -20;
             this.isAttacking = true;
             this.animationTimer = 0;
         }
@@ -140,6 +141,7 @@ class Character extends DrawableObject {
         }
         if (this.isAttacking || this.isThrowing) {
             if (this.currentAnimationFrame >= this.imagesToUse.length - 1) {
+                this.collisionOffset[this.direction] = 30;
                 this.isAttacking = false;
                 if (this.isThrowing) {
                     this.spawnBottle();
@@ -155,7 +157,8 @@ class Character extends DrawableObject {
     let bottle = new ThrowableObject(
         this.x + (this.direction === 'right' ? 50 : 0), 
         this.y + 50, 
-        this.direction
+        this.direction, 
+        this.x
     );
     this.world.throwableObjects.push(bottle); 
 }
