@@ -12,7 +12,9 @@ class World {
         { name: '1_first_layer', parallax: 1.0 }
     ];
     throwableObjects = [];
+    collectableBottles = [];
     enemies = [];
+    groundLevel = 404;
 
     WIDTH = 960;
     HEIGHT = 540;
@@ -40,6 +42,7 @@ class World {
             return bg;
         });
         this.clouds = new Clouds(this.WIDTH, this.HEIGHT);
+        this.spawnBottles();
     }
 
     update() {
@@ -62,6 +65,7 @@ class World {
 
         this.checkThrowObjects();
         this.checkCollisions();
+        this.checkBottleCollection();
         this.cleanUpObjects();
     }
 
@@ -72,11 +76,19 @@ class World {
         }
     }
 
+    spawnBottles() {
+        for (let i = 0; i < 5; i++) {
+            let xBottlePos = 400 + Math.random() * 2000;
+            this.collectableBottles.push(new CollectableBottle(xBottlePos, this.groundLevel));
+        }
+    }
+
     startLevel() {
         for (let i = 0; i < 3; i++) {
             let xPos = 2000 + (i * 500);
             this.enemies.push(new Chicken(xPos));
         }
+
     }
 
     checkThrowObjects() {
@@ -103,6 +115,16 @@ class World {
         });
     }
 
+    checkBottleCollection() {
+        this.collectableBottles.forEach((bottle, index) => {
+            if (this.character.isColliding(bottle)) {
+                this.character.bottleInventory += 1;
+                console.log('Flasche eingesammelt! Vorrat:', this.character.bottleInventory);
+                this.collectableBottles.splice(index, 1);
+            }
+        });
+    }
+
     cleanUpObjects() {
         this.throwableObjects = this.throwableObjects.filter(obj => !obj.isGone);
         this.enemies = this.enemies.filter(chicken => !chicken.isGone);
@@ -117,9 +139,12 @@ class World {
         this.character.updateAnimation();
         this.character.drawManual(this.ctx, this.cameraOffset);
         this.character.drawHitbox(this.ctx, this.cameraOffset);
-        this.enemies.forEach(chicken => {     
+        this.enemies.forEach(chicken => {
             chicken.drawManual(this.ctx, this.cameraOffset);
             chicken.drawHitbox(this.ctx, this.cameraOffset);
+        });
+        this.collectableBottles.forEach(bottle => {
+            bottle.drawManual(this.ctx, this.cameraOffset);
         });
         this.throwableObjects.forEach(obj => {
             obj.draw(this.ctx, this.cameraOffset);

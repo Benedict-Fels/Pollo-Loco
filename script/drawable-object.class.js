@@ -12,6 +12,7 @@ class DrawableObject {
         right: 0,
         bottom: 0
     };
+    groundLevel = 404;
 
     loadImage(path) {
         if (!this.imageCache[path]) {
@@ -47,7 +48,7 @@ class DrawableObject {
             ctx.lineWidth = '2';
             ctx.strokeStyle = 'red';
             ctx.rect(
-                this.x + this.collisionOffset.left + cameraOffset, 
+                this.x + this.collisionOffset.left + cameraOffset,
                 this.y + this.collisionOffset.top,
                 this.width - this.collisionOffset.left - this.collisionOffset.right,
                 this.height - this.collisionOffset.top - this.collisionOffset.bottom

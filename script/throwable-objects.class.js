@@ -3,7 +3,6 @@ class ThrowableObject extends DrawableObject {
     speedY = 30;
     speedX = 20;
     acceleration = 2;
-    groundLevel = 404;
 
     spinningBottleImages = [
         'img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',

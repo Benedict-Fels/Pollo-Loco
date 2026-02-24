@@ -13,6 +13,7 @@ class Character extends DrawableObject {
     health = 10;
     movingDirection = 0;
     currentAnimationFrame = 0;
+    bottleInventory = 5;
 
     idleImages = [
         'img/2_character_pepe/1_idle/idle/I-1.png',
@@ -132,7 +133,6 @@ class Character extends DrawableObject {
 
     updateAnimation() {
         let imagesToUse = this.checkAnimation();
-
         if (this.isWalking !== this.wasWalkingLastFrame) {
             this.animationTimer = 0;
         }
@@ -146,7 +146,9 @@ class Character extends DrawableObject {
             if (this.currentAnimationFrame >= this.imagesToUse.length - 1) {
                 this.collisionOffset[this.direction] = 30;
                 this.isAttacking = false;
-                if (this.isThrowing) {
+                if (this.isThrowing && this.bottleInventory > 0) {
+                    this.bottleInventory -= 1;
+                    console.log('Flasche geworfen! Verbleibender Vorrat:', this.bottleInventory);
                     this.spawnBottle();
                     this.isThrowing = false;
                 }
@@ -227,16 +229,16 @@ class Character extends DrawableObject {
     }
 
     drawManual(ctx, cameraOffset) {
-    if (this.direction === 'left') {
-        ctx.save();
-        ctx.translate(this.x + cameraOffset + this.width / 2, this.y);
-        ctx.scale(-1, 1);
-        ctx.drawImage(this.img, -this.width / 2, 0, this.width, this.height);
-        ctx.restore();
-    } else {
-        ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
+        if (this.direction === 'left') {
+            ctx.save();
+            ctx.translate(this.x + cameraOffset + this.width / 2, this.y);
+            ctx.scale(-1, 1);
+            ctx.drawImage(this.img, -this.width / 2, 0, this.width, this.height);
+            ctx.restore();
+        } else {
+            ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
+        }
     }
-}
 
     drawHitbox(ctx, cameraOffset) {
         ctx.beginPath();
