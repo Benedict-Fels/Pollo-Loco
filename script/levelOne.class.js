@@ -1,17 +1,59 @@
 
-class levelOne extends level {
-
-
+class levelOne {
 
     constructor() {
-        super();
     }
 
-    spawnChicken() {
-        let chicken = new Chicken(this.cameraOffset + this.WIDTH, this.y);
-        // this.chicken.world = this.world;
-        this.world.enemies.push(chicken);
-        this.world.chicken.chickenAnimation();
-        this.world.chicken.moveChicken(this.cameraOffset);
+    checkFirstMovement() {
+        if (this.world.character.movingDirection !== 0 && !this.world.character.isPlaying) {
+            this.world.character.isPlaying = true;
+            this.startWave1();
+        }
+    }
+
+    startWave1() {
+        for (let i = 0; i < 4; i++) {
+            let xPos = -this.world.cameraOffset + this.world.WIDTH + (i * 500);
+            this.world.enemies.push(new Chicken(xPos));
+        }
+    }
+
+    startWave2() {
+        for (let i = 0; i < 8; i++) {
+            let xPos = -this.world.cameraOffset + this.world.WIDTH + Math.random() * 400 + i * 200;
+            this.world.enemies.push(new Chicken(xPos));
+        }
+        this.wave2 = true;
+    }
+
+    startWave3() {
+        for (let i = 0; i < 12; i++) {
+            let xPos = -this.world.cameraOffset + this.world.WIDTH + Math.random() * 400 + i * 100;
+            let speed = 2 + 4 * Math.random();
+            this.world.enemies.push(new Chicken(xPos, speed));
+        }
+        this.wave3 = true;
+    }
+    startWave4() {
+        for (let i = 0; i < 4; i++) {
+            let xPos = -this.world.cameraOffset + this.world.WIDTH + Math.random() * 400 + i * 100;
+            let speed = 4 + 6 * Math.random();
+            this.world.enemies.push(new Chicken(xPos, speed));
+        }
+        this.wave4 = true;
+    }
+
+
+    update() {
+        this.checkFirstMovement();
+        if (this.world.character.x > 2000 && !this.wave2) {
+            this.startWave2();
+        }
+        if (this.world.character.x > 3500 && !this.wave3) {
+            this.startWave3();
+        }
+        if (this.world.character.x > 5000 && !this.wave4) {
+            this.startWave4();
+        }
     }
 }

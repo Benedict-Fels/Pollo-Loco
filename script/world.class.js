@@ -42,7 +42,12 @@ class World {
             return bg;
         });
         this.clouds = new Clouds(this.WIDTH, this.HEIGHT);
-        this.spawnBottles();
+        for (let i = 0; i < 5; i++) {
+            let xBottlePos = 400 + Math.random() * 2000;
+            this.collectableBottles.push(new CollectableBottle(xBottlePos, this.groundLevel));
+        }
+        this.level = new levelOne();
+        this.level.world = this;
     }
 
     update() {
@@ -61,34 +66,11 @@ class World {
         this.clouds.moveClouds();
         this.cameraOffset = 100 - this.character.x;
 
-        this.checkFirstMovement();
-
+        this.level.update();
         this.checkThrowObjects();
         this.checkCollisions();
         this.checkBottleCollection();
         this.cleanUpObjects();
-    }
-
-    checkFirstMovement() {
-        if (this.character.movingDirection !== 0 && !this.character.isPlaying) {
-            this.character.isPlaying = true;
-            this.startLevel();
-        }
-    }
-
-    spawnBottles() {
-        for (let i = 0; i < 5; i++) {
-            let xBottlePos = 400 + Math.random() * 2000;
-            this.collectableBottles.push(new CollectableBottle(xBottlePos, this.groundLevel));
-        }
-    }
-
-    startLevel() {
-        for (let i = 0; i < 3; i++) {
-            let xPos = 2000 + (i * 500);
-            this.enemies.push(new Chicken(xPos));
-        }
-
     }
 
     checkThrowObjects() {
@@ -100,18 +82,26 @@ class World {
 
     checkCollisions() {
         this.enemies.forEach((enemy) => {
-            if (this.character.isColliding(enemy) && !this.character.isAttacking && !enemy.isDead) {
-                this.character.recieveDamage()
+            if (enemy.isDead) return;
+            if (this.character.hasAttacked) {
+                let box = this.character.attackBox;
+                if (box.x + box.width > enemy.x + enemy.collisionOffset.left &&
+                    box.y + box.height > enemy.y + enemy.collisionOffset.top &&
+                    box.x < enemy.x + enemy.width - enemy.collisionOffset.right &&
+                    box.y < enemy.y + enemy.height - enemy.collisionOffset.bottom) {
+                    enemy.isDead = true;
+                    return;
+                }
             }
-            if (this.character.isAttacking && this.character.isColliding(enemy)) {
-                enemy.isDead = true;
-                console.log('Chicken wurde attackiert');
-
+            if (this.character.isColliding(enemy) && !this.character.invincibility) {
+                this.character.recieveDamage();
             }
-            if (this.throwableObjects.some(obj => obj.isColliding(enemy) && !obj.isGone && !obj.isSplashing)) {
-                console.log('Chicken wurde getroffen!');
-                enemy.isDead = true;
-            }
+            this.throwableObjects.forEach(obj => {
+                if (obj.isColliding(enemy) && !obj.isSplashing) {
+                    enemy.isDead = true;
+                    obj.isSplashing = true;
+                }
+            });
         });
     }
 
@@ -127,7 +117,10 @@ class World {
 
     cleanUpObjects() {
         this.throwableObjects = this.throwableObjects.filter(obj => !obj.isGone);
-        this.enemies = this.enemies.filter(chicken => !chicken.isGone);
+        this.enemies = this.enemies.filter(enemy => {
+        let isOffScreenLeft = enemy.x < this.character.x - this.WIDTH * 2; 
+        return !enemy.isGone && !isOffScreenLeft;
+    });
     }
 
     draw() {
@@ -150,6 +143,11 @@ class World {
             obj.draw(this.ctx, this.cameraOffset);
             obj.drawHitbox(this.ctx, this.cameraOffset);
         });
+        if (this.character.hasAttacked) {
+            let box = this.character.attackBox;
+            this.ctx.strokeStyle = 'blue';
+            this.ctx.strokeRect(box.x + this.cameraOffset, box.y, box.width, box.height);
+        }
     }
 
     gameLoop() {

@@ -1,7 +1,6 @@
 
 
 class Chicken extends DrawableObject {
-    speed = 3;
     direction = 'left';
     currentAnimationFrame = 0;
     chickenDistance = 0;
@@ -18,12 +17,13 @@ class Chicken extends DrawableObject {
 
     deadImage = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 
-    constructor(startX = 1100) {
+    constructor(startX = 1100, speed = 3) {
         super();
         this.x = startX;
         this.y = 370;
         this.width = 100;
         this.height = 100;
+        this.speed = speed;
         this.collisionOffset = { top: 20, left: 20, right: 20, bottom: 10 };
         this.loadImages(this.walkImages);
         this.loadImage(this.deadImage);

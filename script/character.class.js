@@ -118,7 +118,7 @@ class Character extends DrawableObject {
 
     attack() {
         if (!this.isAttacking && !this.isJumping) {
-            this.collisionOffset[this.direction] = -20;
+            // this.collisionOffset[this.direction] = -20;
             this.isAttacking = true;
             this.animationTimer = 0;
         }
@@ -158,6 +158,17 @@ class Character extends DrawableObject {
         }
     }
 
+    get attackBox() {
+        let attackRange = 35;
+        let xOffset = (this.direction === 'right') ? 80 : -40;
+        return {
+            x: this.x + xOffset,
+            y: this.y + 100,
+            width: attackRange,
+            height: 80
+        }
+    }
+
     spawnBottle() {
         let bottle = new ThrowableObject(
             this.x + (this.direction === 'right' ? 50 : 0),
@@ -185,7 +196,11 @@ class Character extends DrawableObject {
         let i = (this.currentAnimationFrame % imagesToUse.length);
         let path = imagesToUse[i];
         this.img = this.imageCache[path];
-    }
+        if (this.isAttacking && this.currentAnimationFrame >= 8) {
+            this.hasAttacked = true}
+         else
+            this.hasAttacked = false;
+        } 
 
     checkAnimation() {
         if (this.isJumping) {
