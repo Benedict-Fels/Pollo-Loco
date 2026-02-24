@@ -7,9 +7,15 @@ class levelOne {
     checkFirstMovement() {
         if (this.world.character.movingDirection !== 0 && !this.world.character.isPlaying) {
             this.world.character.isPlaying = true;
-            this.startWave1();
+            // this.startWave1();
+            this.startBossWave();
         }
     }
+
+    startBossWave() {
+            let xPos = -this.world.cameraOffset + this.world.WIDTH;
+            this.world.enemies.push(new BossChicken(xPos));
+        }
 
     startWave1() {
         for (let i = 0; i < 4; i++) {
@@ -45,14 +51,14 @@ class levelOne {
 
     update() {
         this.checkFirstMovement();
-        if (this.world.character.x > 2000 && !this.wave2) {
-            this.startWave2();
-        }
-        if (this.world.character.x > 3500 && !this.wave3) {
-            this.startWave3();
-        }
-        if (this.world.character.x > 5000 && !this.wave4) {
-            this.startWave4();
-        }
+        // if (this.world.character.x > 2000 && !this.wave2) {
+        //     this.startWave2();
+        // }
+        // if (this.world.character.x > 3500 && !this.wave3) {
+        //     this.startWave3();
+        // }
+        // if (this.world.character.x > 5000 && !this.wave4) {
+        //     this.startWave4();
+        // }
     }
 }

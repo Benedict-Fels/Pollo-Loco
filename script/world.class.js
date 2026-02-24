@@ -52,12 +52,7 @@ class World {
 
     update() {
         this.character.stopWalking();
-        if (this.keyboard.right) this.character.moveRight();
-        if (this.keyboard.left) this.character.moveLeft();
-        if (this.keyboard.up) this.character.jump();
-        if (this.keyboard.attack) this.character.attack();
-        if (this.keyboard.throw) this.character.throwBottle();
-
+        this.getKeyboardInput();
         this.character.updateAnimation();
         this.enemies.forEach(enemy => {
             enemy.chickenAnimation();
@@ -71,6 +66,14 @@ class World {
         this.checkCollisions();
         this.checkBottleCollection();
         this.cleanUpObjects();
+    }
+
+    getKeyboardInput() {
+        if (this.keyboard.right) this.character.moveRight();
+        if (this.keyboard.left) this.character.moveLeft();
+        if (this.keyboard.up) this.character.jump();
+        if (this.keyboard.attack) this.character.attack();
+        if (this.keyboard.throw) this.character.throwBottle();
     }
 
     checkThrowObjects() {
@@ -89,8 +92,7 @@ class World {
                     box.y + box.height > enemy.y + enemy.collisionOffset.top &&
                     box.x < enemy.x + enemy.width - enemy.collisionOffset.right &&
                     box.y < enemy.y + enemy.height - enemy.collisionOffset.bottom) {
-                    enemy.isDead = true;
-                    return;
+                    this.dealDamage(enemy)
                 }
             }
             if (this.character.isColliding(enemy) && !this.character.invincibility) {
@@ -98,11 +100,31 @@ class World {
             }
             this.throwableObjects.forEach(obj => {
                 if (obj.isColliding(enemy) && !obj.isSplashing) {
-                    enemy.isDead = true;
+                    enemy.health -= 1;
+                    console.log('Lebenspunkte', enemy.health);
+                    if (enemy.health == 0) {
+                        enemy.isDead = true;
+                    }
                     obj.isSplashing = true;
                 }
             });
         });
+    }
+
+    dealDamage(enemy) {
+        if (enemy.takenDamage) {
+            return;
+        }
+        enemy.health -= 1;
+        if (enemy.health == 0) {
+            enemy.isDead = true;
+            return;
+        }
+        console.log('Lebenspunkte', enemy.health);
+        enemy.takenDamage = true;
+        setTimeout(() => {
+            enemy.takenDamage = false;
+        }, 500);
     }
 
     checkBottleCollection() {
@@ -118,9 +140,9 @@ class World {
     cleanUpObjects() {
         this.throwableObjects = this.throwableObjects.filter(obj => !obj.isGone);
         this.enemies = this.enemies.filter(enemy => {
-        let isOffScreenLeft = enemy.x < this.character.x - this.WIDTH * 2; 
-        return !enemy.isGone && !isOffScreenLeft;
-    });
+            let isOffScreenLeft = enemy.x < this.character.x - this.WIDTH * 2;
+            return !enemy.isGone && !isOffScreenLeft;
+        });
     }
 
     draw() {

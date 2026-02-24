@@ -44,7 +44,6 @@ class ThrowableObject extends DrawableObject {
                 return;
             }
             if (this.direction === 'right') {
-                // this.x = (this.x || this.throwLocationX) + this.speedX;
                 this.x += this.speedX;
             } else {
                 this.x -= this.speedX;

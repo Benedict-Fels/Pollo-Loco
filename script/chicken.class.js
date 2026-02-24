@@ -4,6 +4,7 @@ class Chicken extends DrawableObject {
     direction = 'left';
     currentAnimationFrame = 0;
     chickenDistance = 0;
+    health = 1;
     walkImages = [
         'img/3_enemies_chicken/chicken_normal/1_walk/frame_000.png',
         'img/3_enemies_chicken/chicken_normal/1_walk/frame_001.png',

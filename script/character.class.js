@@ -160,7 +160,7 @@ class Character extends DrawableObject {
 
     get attackBox() {
         let attackRange = 35;
-        let xOffset = (this.direction === 'right') ? 80 : -40;
+        let xOffset = (this.direction === 'right') ? 80 : -20;
         return {
             x: this.x + xOffset,
             y: this.y + 100,
