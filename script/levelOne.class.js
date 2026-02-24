@@ -43,7 +43,6 @@ class levelOne {
         this.wave4 = true;
     }
 
-
     update() {
         this.checkFirstMovement();
         if (this.world.character.x > 2000 && !this.wave2) {

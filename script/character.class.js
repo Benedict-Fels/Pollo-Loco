@@ -46,26 +46,26 @@ class Character extends DrawableObject {
         'img/2_character_pepe/3_jump/J-39.png',
     ];
     attackImages = [
-        'img/2_character_pepe/6_attack/A-1.png',
-        'img/2_character_pepe/6_attack/A-2.png',
-        'img/2_character_pepe/6_attack/A-3.png',
-        'img/2_character_pepe/6_attack/A-4.png',
-        'img/2_character_pepe/6_attack/A-5.png',
-        'img/2_character_pepe/6_attack/A-6.png',
-        'img/2_character_pepe/6_attack/A-7.png',
-        'img/2_character_pepe/6_attack/A-8.png',
-        'img/2_character_pepe/6_attack/A-9.png',
-        'img/2_character_pepe/6_attack/A-10.png',
+        'img/2_character_pepe/6_attack/A-1-flipped.png',
+        'img/2_character_pepe/6_attack/A-2-flipped.png',
+        'img/2_character_pepe/6_attack/A-3-flipped.png',
+        'img/2_character_pepe/6_attack/A-4-flipped.png',
+        'img/2_character_pepe/6_attack/A-5-flipped.png',
+        'img/2_character_pepe/6_attack/A-6-flipped.png',
+        'img/2_character_pepe/6_attack/A-7-flipped.png',
+        'img/2_character_pepe/6_attack/A-8-flipped.png',
+        'img/2_character_pepe/6_attack/A-9-flipped.png',
+        'img/2_character_pepe/6_attack/A-10-flipped.png',
     ]
 
     throwImages = [
-        'img/2_character_pepe/6_attack/A-1.png',
-        'img/2_character_pepe/6_attack/A-2.png',
-        'img/2_character_pepe/6_attack/A-3.png',
-        'img/2_character_pepe/6_attack/A-4.png',
-        'img/2_character_pepe/6_attack/A-5.png',
-        'img/2_character_pepe/6_attack/A-6.png',
-        'img/2_character_pepe/6_attack/A-7.png',
+        'img/2_character_pepe/6_attack/A-1-flipped.png',
+        'img/2_character_pepe/6_attack/A-2-flipped.png',
+        'img/2_character_pepe/6_attack/A-3-flipped.png',
+        'img/2_character_pepe/6_attack/A-4-flipped.png',
+        'img/2_character_pepe/6_attack/A-5-flipped.png',
+        'img/2_character_pepe/6_attack/A-6-flipped.png',
+        'img/2_character_pepe/6_attack/A-7-flipped.png',
 
     ]
 
@@ -197,10 +197,11 @@ class Character extends DrawableObject {
         let path = imagesToUse[i];
         this.img = this.imageCache[path];
         if (this.isAttacking && this.currentAnimationFrame >= 8) {
-            this.hasAttacked = true}
-         else
+            this.hasAttacked = true
+        }
+        else
             this.hasAttacked = false;
-        } 
+    }
 
     checkAnimation() {
         if (this.isJumping) {
