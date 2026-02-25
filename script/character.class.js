@@ -125,7 +125,7 @@ class Character extends DrawableObject {
     }
 
     throwBottle() {
-        if (!this.isAttacking && !this.isJumping) {
+        if (!this.isAttacking && !this.isJumping && this.bottleInventory > 0) {
             this.isThrowing = true;
             this.animationTimer = 0;
         }
@@ -144,9 +144,9 @@ class Character extends DrawableObject {
         }
         if (this.isAttacking || this.isThrowing) {
             if (this.currentAnimationFrame >= this.imagesToUse.length - 1) {
-                this.collisionOffset[this.direction] = 30;
+                // this.collisionOffset[this.direction] = 30;
                 this.isAttacking = false;
-                if (this.isThrowing && this.bottleInventory > 0) {
+                if (this.isThrowing) {
                     this.bottleInventory -= 1;
                     console.log('Flasche geworfen! Verbleibender Vorrat:', this.bottleInventory);
                     this.spawnBottle();
@@ -170,11 +170,10 @@ class Character extends DrawableObject {
     }
 
     spawnBottle() {
-        let bottle = new ThrowableObject(
+        let bottle = new SalsaBottle(
             this.x + (this.direction === 'right' ? 50 : 0),
             this.y + 50,
             this.direction,
-            this.x
         );
         this.world.throwableObjects.push(bottle);
     }
@@ -190,12 +189,7 @@ class Character extends DrawableObject {
     }
 
     characterAnimation(imagesToUse, timer = 20) {
-        this.animationTimer = (this.animationTimer || 0) + 1;
-        if (this.animationTimer % timer !== 0) return;
-        this.currentAnimationFrame = ((this.animationTimer / timer));
-        let i = (this.currentAnimationFrame % imagesToUse.length);
-        let path = imagesToUse[i];
-        this.img = this.imageCache[path];
+        this.animateImages(imagesToUse, timer)
         if (this.isAttacking && this.currentAnimationFrame >= 8) {
             this.hasAttacked = true
         }

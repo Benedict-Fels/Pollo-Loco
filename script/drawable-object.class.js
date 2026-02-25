@@ -31,6 +31,15 @@ class DrawableObject {
         });
     }
 
+    animateImages(imagesToUse, timer = 20) {
+        this.animationTimer = (this.animationTimer || 0) + 1;
+        if (this.animationTimer % timer !== 0) return;
+        this.currentAnimationFrame = ((this.animationTimer / timer));
+        let i = (this.currentAnimationFrame % imagesToUse.length);
+        let path = imagesToUse[i];
+        this.img = this.imageCache[path];
+    }
+
     draw(ctx) {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }

@@ -47,11 +47,11 @@ class BossChicken extends DrawableObject {
         'img/4_enemie_boss_chicken/3_attack/G13.png',
         'img/4_enemie_boss_chicken/3_attack/G17.png',
         'img/4_enemie_boss_chicken/3_attack/G18.png',
-        'img/4_enemie_boss_chicken/3_attack/G19.png',
+        'img/4_enemie_boss_chicken/3_attack/G19_effects.png',
         'img/4_enemie_boss_chicken/3_attack/G20.png',
         'img/4_enemie_boss_chicken/3_attack/G17.png',
         'img/4_enemie_boss_chicken/3_attack/G18.png',
-        'img/4_enemie_boss_chicken/3_attack/G19.png',
+        'img/4_enemie_boss_chicken/3_attack/G19_effects.png',
         'img/4_enemie_boss_chicken/3_attack/G20.png',
     ]
 
@@ -104,14 +104,14 @@ class BossChicken extends DrawableObject {
     }
 
     chickenAnimation() {
-        // if (this.isDead) {
-        //     this.img = this.imageCache[this.deadImages];
-        //     this.speed = 0;
-        //     setTimeout(() => {
-        //         this.isGone = true;
-        //     }, 2000);
-        //     return;
-        // }
+        if (this.isDead) {
+            this.img = this.imageCache[this.deadImages];
+            this.speed = 0;
+            setTimeout(() => {
+                this.isGone = true;
+            }, 2000);
+            return;
+        }
         this.animationTimer = (this.animationTimer || 0) + 1;
         if (this.animationTimer % 15 !== 0) return;
         this.currentAnimationFrame = ((this.animationTimer / 15));
@@ -121,6 +121,12 @@ class BossChicken extends DrawableObject {
         }
         let path = this.imagesToUse[this.currentAnimationFrame];
         this.img = this.imageCache[path];
+        if (this.isAlerting) {
+            this.direction = 'right';
+            if (this.currentAnimationFrame == 1 || this.currentAnimationFrame == 4) {
+                this.shootEgg();
+            }
+        } else { this.direction = 'left' }
     }
 
     moveChicken() {
@@ -128,9 +134,26 @@ class BossChicken extends DrawableObject {
         this.x -= this.speed;
     }
 
+    shootEgg() {
+        let distance = this.x - this.world.character.x;
+        let distanceInRange = Math.max(100, Math.min(800, distance));
+        let flightTime = 60;
+        let targetSpeedX = distanceInRange / flightTime;
+        let egg = new BossEgg(this.x, this.y + 150, targetSpeedX);
+        this.world.throwableObjects.push(egg);
+    }
+
     drawManual(ctx, cameraOffset) {
+    if (this.direction === 'right') {
+        ctx.save();
+        ctx.translate(this.x + cameraOffset + this.width, this.y);
+        ctx.scale(-1, 1);
+        ctx.drawImage(this.img, 0, 0, this.width, this.height);
+        ctx.restore();
+    } else {
         ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
     }
+}
 
     drawHitbox(ctx, cameraOffset) {
         ctx.beginPath();

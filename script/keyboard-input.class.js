@@ -19,6 +19,7 @@ class KeyboardInput {
         if (e.key === 'ArrowLeft' || e.key === 'a') this.left = true;
         if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') this.up = true;
         if (e.key === 'q') this.throw = true;
+        if (e.key === 'e') this.attack = true;
     }
 
     handleKeyUp(e) {
@@ -26,6 +27,7 @@ class KeyboardInput {
         if (e.key === 'ArrowLeft' || e.key === 'a') this.left = false;
         if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') this.up = false;
         if (e.key === 'q') this.throw = false;
+        if (e.key === 'e') this.attack = false;
     }
 
     handleLeftMouseDown(e) {

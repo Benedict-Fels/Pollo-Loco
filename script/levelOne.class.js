@@ -14,7 +14,10 @@ class levelOne {
 
     startBossWave() {
             let xPos = -this.world.cameraOffset + this.world.WIDTH;
-            this.world.enemies.push(new BossChicken(xPos));
+            let boss = new BossChicken(xPos)
+            this.world.enemies.push(boss);
+            boss.world = this.world;
+
         }
 
     startWave1() {

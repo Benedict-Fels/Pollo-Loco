@@ -1,3 +1,4 @@
+
 class World {
     canvas;
     ctx;
@@ -106,6 +107,12 @@ class World {
                         enemy.isDead = true;
                     }
                     obj.isSplashing = true;
+                }
+                if (obj instanceof BossEgg) {
+                    if (obj.isColliding(this.character) && !obj.isSplashing) {
+                        this.character.recieveDamage();
+                        obj.isSplashing = true;
+                    }
                 }
             });
         });
