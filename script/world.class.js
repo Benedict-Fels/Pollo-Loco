@@ -16,6 +16,7 @@ class World {
     collectableBottles = [];
     enemies = [];
     groundLevel = 404;
+    gameStopped = false;
 
     WIDTH = 960;
     HEIGHT = 540;
@@ -99,14 +100,23 @@ class World {
             if (this.character.isColliding(enemy) && !this.character.invincibility) {
                 this.character.recieveDamage();
             }
-            this.throwableObjects.forEach(obj => {
-                if (obj.isColliding(enemy) && !obj.isSplashing) {
-                    enemy.health -= 1;
-                    console.log('Lebenspunkte', enemy.health);
-                    if (enemy.health == 0) {
-                        enemy.isDead = true;
+            if (enemy instanceof BossChicken && enemy.hasAttacked) {
+                let box = enemy.attackBox;
+                if (box.x + box.width > this.character.x + this.character.collisionOffset.left &&
+                    box.y + box.height > this.character.y + this.character.collisionOffset.top &&
+                    box.x < this.character.x + this.character.width - this.character.collisionOffset.right &&
+                    box.y < this.character.y + this.character.height - this.character.collisionOffset.bottom) {
+                    if (!this.character.invincibility) {
+                        this.character.recieveDamage()
                     }
-                    obj.isSplashing = true;
+                }
+            }
+            this.throwableObjects.forEach(obj => {
+                if (obj instanceof SalsaBottle) {
+                    if (obj.isColliding(enemy) && !obj.isSplashing) {
+                        this.dealDamage(enemy);
+                        obj.isSplashing = true;
+                    }
                 }
                 if (obj instanceof BossEgg) {
                     if (obj.isColliding(this.character) && !obj.isSplashing) {
@@ -119,19 +129,22 @@ class World {
     }
 
     dealDamage(enemy) {
-        if (enemy.takenDamage) {
-            return;
-        }
+        if (enemy.isDead || enemy.isHurt) return;
         enemy.health -= 1;
-        if (enemy.health == 0) {
+        if (enemy.health <= 0) {
             enemy.isDead = true;
-            return;
         }
-        console.log('Lebenspunkte', enemy.health);
-        enemy.takenDamage = true;
-        setTimeout(() => {
-            enemy.takenDamage = false;
-        }, 500);
+        if (enemy instanceof BossChicken) {
+            if (enemy.health <= 0) {
+                enemy.isHurt = false;
+                enemy.animationTimer = 0;
+                enemy.currentAnimationFrame = 0;
+            } else {
+                enemy.gotDamaged = true;
+            }
+            enemy.checkAnimation();
+            console.log('Lebenspunkte', enemy.health);
+        }
     }
 
     checkBottleCollection() {
@@ -161,9 +174,14 @@ class World {
         this.character.updateAnimation();
         this.character.drawManual(this.ctx, this.cameraOffset);
         this.character.drawHitbox(this.ctx, this.cameraOffset);
-        this.enemies.forEach(chicken => {
-            chicken.drawManual(this.ctx, this.cameraOffset);
-            chicken.drawHitbox(this.ctx, this.cameraOffset);
+        this.enemies.forEach(enemy => {
+            enemy.drawManual(this.ctx, this.cameraOffset);
+            enemy.drawHitbox(this.ctx, this.cameraOffset);
+            if (enemy instanceof BossChicken && enemy.hasAttacked) {
+                let box = enemy.attackBox;
+                this.ctx.strokeStyle = 'red';
+                this.ctx.strokeRect(box.x + this.cameraOffset, box.y, box.width, box.height);
+            }
         });
         this.collectableBottles.forEach(bottle => {
             bottle.drawManual(this.ctx, this.cameraOffset);
@@ -174,12 +192,13 @@ class World {
         });
         if (this.character.hasAttacked) {
             let box = this.character.attackBox;
-            this.ctx.strokeStyle = 'blue';
+            this.ctx.strokeStyle = 'red';
             this.ctx.strokeRect(box.x + this.cameraOffset, box.y, box.width, box.height);
         }
     }
 
     gameLoop() {
+        if (this.gameStopped) return;
         this.update();
         this.draw();
         requestAnimationFrame(() => this.gameLoop());

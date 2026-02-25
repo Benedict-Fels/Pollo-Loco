@@ -1,6 +1,6 @@
 
 class Character extends DrawableObject {
-    speed = 10;
+    speed = 7;
     speedY = 0;
     acceleration = 2;
     isJumping = false;
@@ -9,11 +9,14 @@ class Character extends DrawableObject {
     isAttacking = false;
     invincibility = false;
     isPlaying = false;
+    isHurt = false;
     direction = 'right';
     health = 10;
     movingDirection = 0;
     currentAnimationFrame = 0;
     bottleInventory = 5;
+
+
 
     idleImages = [
         'img/2_character_pepe/1_idle/idle/I-1.png',
@@ -69,6 +72,22 @@ class Character extends DrawableObject {
 
     ]
 
+    hurtImages = [
+        'img/2_character_pepe/4_hurt/H-41.png',
+        'img/2_character_pepe/4_hurt/H-42.png',
+        'img/2_character_pepe/4_hurt/H-43.png'
+    ];
+
+    deadImages = [
+        'img/2_character_pepe/5_dead/D-51.png',
+        'img/2_character_pepe/5_dead/D-52.png',
+        'img/2_character_pepe/5_dead/D-53.png',
+        'img/2_character_pepe/5_dead/D-54.png',
+        'img/2_character_pepe/5_dead/D-55.png',
+        'img/2_character_pepe/5_dead/D-56.png',
+        'img/2_character_pepe/5_dead/D-57.png',
+    ]
+
     animationCounter = 0;
 
     constructor() {
@@ -85,6 +104,8 @@ class Character extends DrawableObject {
         this.loadImages(this.jumpImages);
         this.loadImages(this.attackImages);
         this.loadImages(this.throwImages);
+        this.loadImages(this.hurtImages);
+        this.loadImages(this.deadImages);
         this.updateAnimation();
         this.applyGravity();
 
@@ -181,15 +202,25 @@ class Character extends DrawableObject {
     recieveDamage() {
         if (this.invincibility) return;
         this.health -= 1;
+        if (this.health <= 0) {
+            this.isDead = true;
+            return
+        }
         console.log(`Character health: ${this.health}`);
+        this.isHurt = true;
         this.invincibility = true;
         setTimeout(() => {
+            this.isHurt = false;
             this.invincibility = false;
-        }, 1000);
+        }, 500);
     }
 
     characterAnimation(imagesToUse, timer = 20) {
         this.animateImages(imagesToUse, timer)
+        if (this.isDead && this.currentAnimationFrame == this.deadImages.length - 1) {
+            console.log(`Ende`);
+            this.world.gameStopped = true;
+        };
         if (this.isAttacking && this.currentAnimationFrame >= 8) {
             this.hasAttacked = true
         }
@@ -198,7 +229,11 @@ class Character extends DrawableObject {
     }
 
     checkAnimation() {
-        if (this.isJumping) {
+        if (this.isDead) {
+            return this.imagesToUse = this.deadImages;
+        } else if (this.isHurt) {
+            return this.imagesToUse = this.hurtImages;
+        } else if (this.isJumping) {
             return this.imagesToUse = this.jumpImages;
         } else if (this.isThrowing) {
             return this.imagesToUse = this.throwImages;

@@ -1,15 +1,32 @@
 
 class BossChicken extends DrawableObject {
+    facingLeft = true;
     direction = 'left';
     currentAnimationFrame = 0;
     chickenDistance = 0;
-    health = 100;
+    health = 2;
     speed = 2;
+    groundY = 200;
     attackIndex = 1;
     isWalking = true;
     isStomping = false;
     isAlerting = false;
     isCallingChicken = false;
+    hasAttacked = false;
+    gotDamaged = false;
+    isHurt = false;
+    isDead = false;
+    newFrame = false;
+    damageInstance = 0;
+    hurtAnimationTimer = 0;
+    animationSpeed = 15;
+
+    hurtImages = [
+        'img/4_enemie_boss_chicken/4_hurt/G21.png',
+        'img/4_enemie_boss_chicken/4_hurt/G22.png',
+        'img/4_enemie_boss_chicken/4_hurt/G23.png',
+    ];
+
     walkImages = [
         'img/4_enemie_boss_chicken/1_walk/G1.png',
         'img/4_enemie_boss_chicken/1_walk/G2.png',
@@ -64,15 +81,15 @@ class BossChicken extends DrawableObject {
     constructor(startX = 1100) {
         super();
         this.x = startX;
-        this.y = 200;
+        this.y = this.groundY;
         this.width = 300;
         this.height = 300;
-
         this.collisionOffset = { top: 70, left: 50, right: 50, bottom: 70 };
         this.loadImages(this.walkImages);
         this.loadImages(this.alertImages);
         this.loadImages(this.stompImages);
         this.loadImages(this.callChickenImages);
+        this.loadImages(this.hurtImages);
         this.loadImages(this.deadImages);
         this.imagesToUse = this.walkImages;
         this.img = this.imageCache[this.imagesToUse[0]];
@@ -80,15 +97,17 @@ class BossChicken extends DrawableObject {
     }
 
     checkAnimation() {
-        if (this.isStomping) {
-            return this.imagesToUse = this.stompImages;
-        } else if (this.isAlerting) {
-            return this.imagesToUse = this.alertImages;
-        } else if (this.isCallingChicken) {
-            return this.imagesToUse = this.callChickenImages;
-        } else if (this.isWalking) {
-            return this.imagesToUse = this.walkImages;
-        }
+        this.facingLeft = true;
+        // this.direction = 'left'
+        if (this.isDead) this.imagesToUse = this.deadImages;
+        else if (this.isHurt) this.imagesToUse = this.hurtImages;
+        else if (this.isStomping) this.imagesToUse = this.stompImages;
+        else if (this.isAlerting) {
+            this.imagesToUse = this.alertImages;
+            this.facingLeft = false;
+            // this.direction = 'left'
+        } else if (this.isCallingChicken) this.imagesToUse = this.callChickenImages;
+        else if (this.isWalking) this.imagesToUse = this.walkImages;
     }
 
     getAttackPattern() {
@@ -98,35 +117,94 @@ class BossChicken extends DrawableObject {
         this.animationTimer = 0;
         this.currentAnimationFrame = 0;
         if (this.attackIndex % 2 !== 0) { this.isWalking = true, this.speed = 1; return }
-        if (this.attackIndex == 2) { this.isAlerting = true, this.speed = 0; return }
-        if (this.attackIndex == 4) { this.isStomping = true, this.speed = 1; return }
+        if (this.attackIndex == 2) { this.isStomping = true, this.speed = 1; return }
+        if (this.attackIndex == 4) { this.isAlerting = true, this.speed = 0; return }
         if (this.attackIndex == 6) { this.isCallingChicken = true, this.speed = 0; return }
     }
 
     chickenAnimation() {
-        if (this.isDead) {
-            this.img = this.imageCache[this.deadImages];
-            this.speed = 0;
+        if (this.isHurt) {
+            this.hurtAnimation();
+        } else {
+            this.mainAnimation();
+        }
+    }
+
+    mainAnimation() {
+        this.getAnimationFrame('animationTimer', this.animationSpeed);
+        if (this.newFrame) {
+            this.handleStateTransitions();
+            this.setCurrentImage(this.imagesToUse);
+            this.triggerFrameActions();
+            this.checkDamage();
+        }
+    }
+
+    getAnimationFrame(timer, animateSpeed) {
+        this[timer] = (this[timer] || 0) + 1;
+        if (this[timer] % animateSpeed !== 0) {
+            return this.newFrame = false
+        }
+        this.newFrame = true;
+        this.currentAnimationFrame = (this[timer] / animateSpeed);
+    }
+
+    setCurrentImage(imagesToUse) {
+        let path = imagesToUse[this.currentAnimationFrame];
+        if (path) this.img = this.imageCache[path];
+    }
+
+    handleStateTransitions() {
+        if (this.currentAnimationFrame >= this.imagesToUse.length) {
+            if (this.isDead) {
+                this.finalizeDeath();
+            } else {
+                this.getAttackPattern();
+                this.checkAnimation();
+            }
+        }
+        if (this.gotDamaged) {
+            this.isHurt = true;
+            this.hurtAnimationTimer = 0;
+            this.gotDamaged = false;
+        }
+    }
+
+    finalizeDeath() {
+        this.checkAnimation();
+        if (this.currentAnimationFrame >= this.imagesToUse.length - 1) {
+            this.currentAnimationFrame = this.imagesToUse.length - 1;
             setTimeout(() => {
                 this.isGone = true;
+                this.world.gameStopped = true;
             }, 2000);
-            return;
         }
-        this.animationTimer = (this.animationTimer || 0) + 1;
-        if (this.animationTimer % 15 !== 0) return;
-        this.currentAnimationFrame = ((this.animationTimer / 15));
-        if (this.currentAnimationFrame == this.imagesToUse.length) {
-            this.getAttackPattern();
-            this.checkAnimation();
+    }
+
+    triggerFrameActions() {
+        if (this.isAlerting && (this.currentAnimationFrame == 1 || this.currentAnimationFrame == 4))
+            this.shootEgg();
+        if (this.isCallingChicken && (this.currentAnimationFrame == 3 || this.currentAnimationFrame == 6))
+            this.world.level.spawnChicken();
+        if (this.isStomping)
+            if (this.currentAnimationFrame == 3 || this.currentAnimationFrame == 7) this.hasAttacked = true
+            else this.hasAttacked = false;
+    }
+
+    checkDamage() {
+        if (this.gotDamaged) {
+            this.isHurt = true;
+            this.hurtAnimationTimer = 0;
+            this.gotDamaged = false;
         }
-        let path = this.imagesToUse[this.currentAnimationFrame];
-        this.img = this.imageCache[path];
-        if (this.isAlerting) {
-            this.direction = 'right';
-            if (this.currentAnimationFrame == 1 || this.currentAnimationFrame == 4) {
-                this.shootEgg();
-            }
-        } else { this.direction = 'left' }
+    }
+
+    hurtAnimation() {
+        this.getAnimationFrame('hurtAnimationTimer', this.animationSpeed);
+        this.setCurrentImage(this.hurtImages)
+        if (this.currentAnimationFrame == this.hurtImages.length - 1) {
+            this.isHurt = false;
+        }
     }
 
     moveChicken() {
@@ -143,17 +221,28 @@ class BossChicken extends DrawableObject {
         this.world.throwableObjects.push(egg);
     }
 
-    drawManual(ctx, cameraOffset) {
-    if (this.direction === 'right') {
-        ctx.save();
-        ctx.translate(this.x + cameraOffset + this.width, this.y);
-        ctx.scale(-1, 1);
-        ctx.drawImage(this.img, 0, 0, this.width, this.height);
-        ctx.restore();
-    } else {
-        ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
+    get attackBox() {
+        let attackRange = this.width + 50;
+        let xOffset = -20;
+        return {
+            x: this.x + xOffset,
+            y: this.groundLevel,
+            width: attackRange,
+            height: 40
+        }
     }
-}
+
+    drawManual(ctx, cameraOffset) {
+        if (this.facingLeft) {
+            ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
+        } else {
+            ctx.save();
+            ctx.translate(this.x + cameraOffset + this.width, this.y);
+            ctx.scale(-1, 1);
+            ctx.drawImage(this.img, 0, 0, this.width, this.height);
+            ctx.restore();
+        }
+    }
 
     drawHitbox(ctx, cameraOffset) {
         ctx.beginPath();
@@ -161,9 +250,5 @@ class BossChicken extends DrawableObject {
             this.width - this.collisionOffset.left - this.collisionOffset.right,
             this.height - this.collisionOffset.top - this.collisionOffset.bottom);
         ctx.stroke();
-    }
-
-    recieveDamage() {
-        this.isDead = true;
     }
 }

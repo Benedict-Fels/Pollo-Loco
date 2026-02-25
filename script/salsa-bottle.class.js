@@ -48,7 +48,7 @@ class SalsaBottle extends ThrowableObject {
         if (!this.isSplashing) {
             ctx.beginPath();
             ctx.lineWidth = '2';
-            ctx.strokeStyle = 'blue';
+            ctx.strokeStyle = 'red';
             ctx.rect(
                 this.x + this.collisionOffset.left + cameraOffset,
                 this.y + this.collisionOffset.top,
