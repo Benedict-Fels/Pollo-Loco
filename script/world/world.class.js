@@ -53,7 +53,7 @@ class World {
     }
 
     update() {
-        this.character.stopWalking();
+        // this.character.stopWalking();
         this.getKeyboardInput();
         this.character.updateAnimation();
         this.enemies.forEach(enemy => {
@@ -71,8 +71,13 @@ class World {
     }
 
     getKeyboardInput() {
-        if (this.keyboard.right) this.character.moveRight();
-        if (this.keyboard.left) this.character.moveLeft();
+        if (this.keyboard.right) {
+        this.character.moveRight();
+    } else if (this.keyboard.left) {
+        this.character.moveLeft();
+    } else {
+        this.character.stopWalking();
+    }
         if (this.keyboard.up) this.character.jump();
         if (this.keyboard.attack) this.character.attack();
         if (this.keyboard.throw) this.character.throwBottle();
@@ -171,7 +176,7 @@ class World {
         this.backgrounds.forEach(bg => {
             bg.draw(this.ctx, this.cameraOffset);
         });
-        this.character.updateAnimation();
+        // this.character.updateAnimation();
         this.character.drawManual(this.ctx, this.cameraOffset);
         this.character.drawHitbox(this.ctx, this.cameraOffset);
         this.enemies.forEach(enemy => {

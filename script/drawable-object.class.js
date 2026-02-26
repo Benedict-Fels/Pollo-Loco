@@ -31,13 +31,36 @@ class DrawableObject {
         });
     }
 
-    animateImages(imagesToUse, timer = 20) {
-        this.animationTimer = (this.animationTimer || 0) + 1;
-        if (this.animationTimer % timer !== 0) return;
-        this.currentAnimationFrame = ((this.animationTimer / timer));
-        let i = (this.currentAnimationFrame % imagesToUse.length);
+    getAnimationFrame(timer, animateSpeed) {
+        this[timer] = (this[timer] || 0) + 1;
+        if (this[timer] % animateSpeed !== 0) {
+            return this.newFrame = false
+        }
+        this.newFrame = true;
+        this.currentAnimationFrame = (this[timer] / animateSpeed);
+    }
+
+    setCurrentImage(imagesToUse) {
+        if (!imagesToUse || imagesToUse.length === 0) return;
+        let i = Math.floor(this.currentAnimationFrame) % imagesToUse.length;
         let path = imagesToUse[i];
-        this.img = this.imageCache[path];
+        if (path) this.img = this.imageCache[path];
+    }
+
+
+    // setCurrentImage(imagesToUse) {  
+    //     let path = imagesToUse[this.currentAnimationFrame];
+    //     if (path) this.img = this.imageCache[path];
+    // }
+
+    animateImages(imagesToUse, timer = 20) {
+        this.getAnimationFrame('animationTimer', timer);
+        this.setCurrentImage(imagesToUse);
+    }
+
+    checkEndAnimation() {
+        if (this.currentAnimationFrame >= this.imagesToUse.length - 1) return true
+        else return false
     }
 
     draw(ctx) {

@@ -5,18 +5,6 @@ class Chicken extends DrawableObject {
     currentAnimationFrame = 0;
     chickenDistance = 0;
     health = 1;
-    walkImages = [
-        'img/3_enemies_chicken/chicken_normal/1_walk/frame_000.png',
-        'img/3_enemies_chicken/chicken_normal/1_walk/frame_001.png',
-        'img/3_enemies_chicken/chicken_normal/1_walk/frame_002.png',
-        'img/3_enemies_chicken/chicken_normal/1_walk/frame_003.png',
-        'img/3_enemies_chicken/chicken_normal/1_walk/frame_004.png',
-        'img/3_enemies_chicken/chicken_normal/1_walk/frame_005.png',
-        'img/3_enemies_chicken/chicken_normal/1_walk/frame_006.png',
-        'img/3_enemies_chicken/chicken_normal/1_walk/frame_007.png',
-        'img/3_enemies_chicken/chicken_normal/1_walk/frame_008.png',];
-
-    deadImage = 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png';
 
     constructor(startX = 1100, speed = 3) {
         super();
@@ -26,9 +14,9 @@ class Chicken extends DrawableObject {
         this.height = 100;
         this.speed = speed;
         this.collisionOffset = { top: 20, left: 20, right: 20, bottom: 10 };
-        this.loadImages(this.walkImages);
-        this.loadImage(this.deadImage);
-        this.img = this.imageCache[this.walkImages[0]];
+        this.loadImages(chicken.walkImages);
+        this.loadImage(chicken.deadImage);
+        this.img = this.imageCache[chicken.walkImages[0]];
     }
 
     spawnChicken() {
@@ -38,7 +26,7 @@ class Chicken extends DrawableObject {
 
     chickenAnimation() {
         if (this.isDead) {
-            this.img = this.imageCache[this.deadImage];
+            this.img = this.imageCache[chicken.deadImage];
             this.speed = 0;
             setTimeout(() => {
                 this.isGone = true;
@@ -48,8 +36,8 @@ class Chicken extends DrawableObject {
         this.animationTimer = (this.animationTimer || 0) + 1;
         if (this.animationTimer % 20 !== 0) return;
         this.currentAnimationFrame = ((this.animationTimer / 20));
-        let i = (this.currentAnimationFrame % this.walkImages.length);
-        let path = this.walkImages[i];
+        let i = (this.currentAnimationFrame % chicken.walkImages.length);
+        let path = chicken.walkImages[i];
         this.img = this.imageCache[path];
     }
 
