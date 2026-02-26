@@ -74,6 +74,9 @@ class World {
         this.enemies.forEach(enemy => {
             enemy.chickenAnimation();
             enemy.moveChicken();
+            if (enemy instanceof Chicken && ((this.character.x - enemy.x) > 3000)) {
+                enemy.despawnChicken()
+            }
         });
         this.clouds.moveClouds();
         this.cameraOffset = 100 - this.character.x;

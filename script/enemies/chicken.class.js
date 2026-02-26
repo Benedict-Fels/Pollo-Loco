@@ -24,6 +24,12 @@ class Chicken extends DrawableObject {
         this.world.enemies.push(this.chicken);
     }
 
+    despawnChicken(){
+        if (this.world.character.x - this.x > 2000 ) {
+            this.isGone = true;
+        }
+    }
+
     chickenAnimation() {
         if (this.isDead) {
             this.img = this.imageCache[chickenImages.deadImage];
