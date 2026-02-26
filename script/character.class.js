@@ -118,7 +118,6 @@ class Character extends DrawableObject {
             this.isDead = true;
             return
         }
-        console.log(`Character health: ${this.health}`);
         this.isHurt = true;
         this.invincibility = true;
         setTimeout(() => {

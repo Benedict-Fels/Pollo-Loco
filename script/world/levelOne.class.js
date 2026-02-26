@@ -8,17 +8,25 @@ class levelOne {
     checkFirstMovement() {
         if (this.world.character.movingDirection !== 0 && !this.world.character.isPlaying) {
             this.world.character.isPlaying = true;
-            this.startWave1();
+            // this.startWave1();
+            this.startBossWave();
         }
     }
 
     startBossWave() {
         let xPos = -this.world.cameraOffset + this.world.WIDTH;
-        let boss = new BossChicken(xPos);
-        this.world.enemies.push(boss);
-        boss.world = this.world;
+        this.boss = new BossChicken(this.world, xPos);
+        this.world.enemies.push(this.boss);
+        this.boss.world = this.world;
         this.bossWave = true;
+        this.bossHealthBar = new BossHealthBar();
     }
+
+    // drawBossBar(ctx) {
+    // if (this.bossWave && this.boss) {
+    //     this.bossHealthBar.draw(ctx, this.boss.health, 10);
+    // }
+// }
 
     startWave1() {
         for (let i = 0; i < 4; i++) {

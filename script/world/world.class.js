@@ -22,6 +22,9 @@ class World {
     WIDTH = 960;
     HEIGHT = 540;
     TILE_WIDTH = 1920;
+    healthBar = new IconBar(20, 20, 'img/7_statusbars/3_icons/icon_health.png');
+    bottleBar = new IconBar(20, 70, 'img/7_statusbars/3_icons/45_bottle_rotation.png');
+    goldBar = new IconBar(20, 120, 'img/7_statusbars/3_icons/nugget1.png');
 
     constructor(canvas, keyboard) {
         this.canvas = canvas;
@@ -44,6 +47,7 @@ class World {
         this.clouds = new Clouds(this.WIDTH, this.HEIGHT);
         this.spawnBottles();
         this.spawnRocks();
+
         this.level = new levelOne(this);
     }
 
@@ -74,18 +78,17 @@ class World {
         this.enemies.forEach(enemy => {
             enemy.chickenAnimation();
             enemy.moveChicken();
-            if (enemy instanceof Chicken && ((this.character.x - enemy.x) > 3000)) {
-                enemy.despawnChicken()
-            }
         });
         this.clouds.moveClouds();
-        this.cameraOffset = 100 - this.character.x;
-
+        this.cameraOffset = 150 - this.character.x;
         this.level.update();
         this.checkThrowObjects();
         this.checkCollisions();
         this.checkBottleCollection();
-        this.checkGoldCollection()
+        this.checkGoldCollection();
+        this.healthBar.count = this.character.health;
+        this.bottleBar.count = this.character.bottleInventory;
+        this.goldBar.count = this.character.nuggets;
         this.cleanUpObjects();
     }
 
@@ -167,7 +170,6 @@ class World {
                 enemy.gotDamaged = true;
             }
             enemy.checkAnimation();
-            console.log('Lebenspunkte', enemy.health);
         }
     }
 
@@ -175,7 +177,6 @@ class World {
         this.collectableBottles.forEach((bottle, index) => {
             if (this.character.isColliding(bottle)) {
                 this.character.bottleInventory += 1;
-                console.log('Flasche eingesammelt! Vorrat:', this.character.bottleInventory);
                 this.collectableBottles.splice(index, 1);
             }
         });
@@ -185,7 +186,6 @@ class World {
         this.collectableNuggets.forEach((nugget, index) => {
             if (this.character.isColliding(nugget)) {
                 this.character.nuggets += 1;
-                console.log('Gold eingesammelt! Vorrat:', this.character.nuggets);
                 this.collectableNuggets.splice(index, 1);
             }
         });
@@ -194,7 +194,7 @@ class World {
     cleanUpObjects() {
         this.throwableObjects = this.throwableObjects.filter(obj => !obj.isGone);
         this.enemies = this.enemies.filter(enemy => {
-            let isOffScreenLeft = enemy.x < this.character.x - this.WIDTH * 2;
+            let isOffScreenLeft = enemy.x < this.character.x - this.WIDTH * 3;
             return !enemy.isGone && !isOffScreenLeft;
         });
     }
@@ -205,14 +205,20 @@ class World {
         this.backgrounds.forEach(bg => {
             bg.draw(this.ctx, this.cameraOffset);
         });
+        // this.backgrounds[0].draw(this.ctx, this.cameraOffset);
+        // this.backgrounds[1].draw(this.ctx, this.cameraOffset);
         this.backgroundRocks.forEach(backgroundRock => {
             backgroundRock.drawManual(this.ctx, this.cameraOffset);
         });
+        // this.backgrounds[2].draw(this.ctx, this.cameraOffset);
         this.collectableNuggets.forEach(nugget => {
             nugget.drawManual(this.ctx, this.cameraOffset);
         });
         this.character.drawManual(this.ctx, this.cameraOffset);
         this.character.drawHitbox(this.ctx, this.cameraOffset);
+        this.healthBar.draw(this.ctx);
+        this.bottleBar.draw(this.ctx);
+        this.goldBar.draw(this.ctx);
         this.enemies.forEach(enemy => {
             enemy.drawManual(this.ctx, this.cameraOffset);
             enemy.drawHitbox(this.ctx, this.cameraOffset);
@@ -233,6 +239,9 @@ class World {
             let box = this.character.attackBox;
             this.ctx.strokeStyle = 'red';
             this.ctx.strokeRect(box.x + this.cameraOffset, box.y, box.width, box.height);
+        }
+        if (this.level.bossWave) {
+            this.level.bossHealthBar.draw(this.ctx, this.level.boss.health, 20);
         }
     }
 

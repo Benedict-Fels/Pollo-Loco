@@ -14,8 +14,9 @@ class BossChicken extends DrawableObject {
     animationSpeed = 15;
 
 
-    constructor(startX = 1100) {
+    constructor(world, startX = 1100) {
         super();
+        this.world = world;
         this.x = startX;
         this.y = this.groundY;
         this.width = 300;
@@ -30,17 +31,22 @@ class BossChicken extends DrawableObject {
     }
 
     checkAnimation() {
-        this.facingLeft = true;
-        // this.direction = 'left'
+        if (this.x > this.world.character.x) {
+            this.facingLeft = true;
+        } else this.facingLeft = false;
         if (this.isDead) this.imagesToUse = bossChickenImages.deadImages;
         else if (this.isHurt) this.imagesToUse = bossChickenImages.hurtImages;
         else if (this.isStomping) this.imagesToUse = bossChickenImages.stompImages;
         else if (this.isLaying) {
             this.imagesToUse = bossChickenImages.layImages;
-            this.facingLeft = false;
-            // this.direction = 'left'
+            this.toggleDirection();
         } else if (this.isCallingChicken) this.imagesToUse = bossChickenImages.callChickenImages;
         else if (this.isWalking) this.imagesToUse = bossChickenImages.walkImages;
+    }
+
+    toggleDirection() {
+        if (this.facingLeft) this.facingLeft = false;
+        else this.facingLeft = true;
     }
 
     getAttackPattern() {
@@ -128,15 +134,18 @@ class BossChicken extends DrawableObject {
 
     moveChicken() {
         if (this.isDead) return;
-        this.x -= this.speed;
+        if (this.facingLeft) {
+            this.x -= this.speed;
+        } else this.x += this.speed;
     }
 
     shootEgg() {
-        let distance = this.x - this.world.character.x;
-        let distanceInRange = Math.max(100, Math.min(800, distance));
+        let distance = this.world.character.x - this.x;
         let flightTime = 60;
-        let targetSpeedX = distanceInRange / flightTime;
-        let egg = new BossEgg(this.x, this.y + 150, targetSpeedX);
+        let direction = distance > 0 ? -1 : 1;
+        let clampedDistance = Math.max(100, Math.min(800, Math.abs(distance)));
+        let targetSpeedX = (clampedDistance / flightTime) * direction;
+        let egg = new BossEgg(this.x, this.y + 140, targetSpeedX);
         this.world.throwableObjects.push(egg);
     }
 
