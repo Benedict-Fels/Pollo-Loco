@@ -1,4 +1,4 @@
-const character = {
+const characterImages = {
     idleImages: [
         'img/2_character_pepe/1_idle/idle/I-1.png',
         'img/2_character_pepe/1_idle/idle/I-2.png',
@@ -66,7 +66,7 @@ const character = {
     ]
 }
 
-const chicken = {
+const chickenImages = {
     walkImages: [
         'img/3_enemies_chicken/chicken_normal/1_walk/frame_000.png',
         'img/3_enemies_chicken/chicken_normal/1_walk/frame_001.png',
@@ -81,7 +81,7 @@ const chicken = {
     deadImage: 'img/3_enemies_chicken/chicken_normal/2_dead/dead.png'
 }
 
-const bossChicken = {
+const bossChickenImages = {
     hurtImages: [
         'img/4_enemie_boss_chicken/4_hurt/G21.png',
         'img/4_enemie_boss_chicken/4_hurt/G22.png',
@@ -132,5 +132,45 @@ const bossChicken = {
         'img/4_enemie_boss_chicken/5_dead/G24.png',
         'img/4_enemie_boss_chicken/5_dead/G25.png',
         'img/4_enemie_boss_chicken/5_dead/G26.png',
+    ]
+}
+
+const salsaBottleImages = {
+    spinningImages: [
+        'img/6_salsa_bottle/bottle_rotation/180_bottle_rotation.png',
+        'img/6_salsa_bottle/bottle_rotation/225_bottle_rotation.png',
+        'img/6_salsa_bottle/bottle_rotation/270_bottle_rotation.png',
+        'img/6_salsa_bottle/bottle_rotation/315_bottle_rotation.png',
+        'img/6_salsa_bottle/bottle_rotation/0_bottle_rotation.png',
+        'img/6_salsa_bottle/bottle_rotation/45_bottle_rotation.png',
+        'img/6_salsa_bottle/bottle_rotation/90_bottle_rotation.png',
+        'img/6_salsa_bottle/bottle_rotation/135_bottle_rotation.png',
+    ],
+    splashImages: [
+        'img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png',
+        'img/6_salsa_bottle/bottle_rotation/bottle_splash/2_bottle_splash.png',
+        'img/6_salsa_bottle/bottle_rotation/bottle_splash/3_bottle_splash.png',
+        'img/6_salsa_bottle/bottle_rotation/bottle_splash/4_bottle_splash.png',
+        'img/6_salsa_bottle/bottle_rotation/bottle_splash/5_bottle_splash.png',
+        'img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png',
+    ]
+}
+
+const egg = {
+    spinningImages: [
+        'img/10_egg/0_egg_rotation.png',
+        'img/10_egg/315_egg_rotation.png',
+        'img/10_egg/270_egg_rotation.png',
+        'img/10_egg/225_egg_rotation.png',
+        'img/10_egg/180_egg_rotation.png',
+        'img/10_egg/135_egg_rotation.png',
+        'img/10_egg/90_egg_rotation.png',
+        'img/10_egg/45_egg_rotation.png',
+    ],
+    splashImages: [
+        'img/10_egg/egg_splash/1_splash.png',
+        'img/10_egg/egg_splash/2_splash.png',
+        'img/10_egg/egg_splash/3_splash.png',
+        'img/10_egg/egg_splash/4_splash.png',
     ]
 }

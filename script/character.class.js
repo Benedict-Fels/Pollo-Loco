@@ -1,23 +1,15 @@
 
 class Character extends DrawableObject {
     speed = 7;
-    speedY = 0;
     acceleration = 2;
-    isJumping = false;
-    isWalking = false;
-    isThrowing = false;
-    isAttacking = false;
-    invincibility = false;
-    isPlaying = false;
-    isHurt = false;
     direction = 'right';
-    health = 10;
-    movingDirection = 0;
-    currentAnimationFrame = 0;
+    health = 200;
     bottleInventory = 5;
+    nuggets = 0;
+    currentAnimationFrame = 0;
     animationCounter = 0;
 
-    constructor() {
+    constructor(world) {
         super();
         this.x = 100;
         this.y = 264;
@@ -25,18 +17,13 @@ class Character extends DrawableObject {
         this.height = 200;
         this.speedY = 0;
         this.collisionOffset = { top: 100, left: 20, right: 30, bottom: 10 };
-
-        this.loadImages(character.idleImages);
-        this.loadImages(character.walkImages);
-        this.loadImages(character.jumpImages);
-        this.loadImages(character.attackImages);
-        this.loadImages(character.throwImages);
-        this.loadImages(character.hurtImages);
-        this.loadImages(character.deadImages);
+        this.world = world;
+        Object.keys(characterImages).forEach(stateImage => {
+            this.loadImages(characterImages[stateImage]);
+        });
         this.updateAnimation();
         this.applyGravity();
-
-        this.img = this.imageCache[character.idleImages[0]];
+        this.img = this.imageCache[characterImages.idleImages[0]];
     }
 
     applyGravity() {
@@ -145,8 +132,11 @@ class Character extends DrawableObject {
         if (this.newFrame) {
             this.setCurrentImage(imagesToUse);
             if (this.isDead && this.checkEndAnimation()) {
+                // setTimeout(() => {
                 console.log(`Ende`);
                 this.world.gameStopped = true;
+
+                // }, 1150);
             };
             this.checkHasAttacked();
         }
@@ -162,19 +152,19 @@ class Character extends DrawableObject {
 
     checkAnimation() {
         if (this.isDead) {
-            this.imagesToUse = character.deadImages;
+            this.imagesToUse = characterImages.deadImages;
         } else if (this.isHurt) {
-            this.imagesToUse = character.hurtImages;
+            this.imagesToUse = characterImages.hurtImages;
         } else if (this.isJumping) {
-            this.imagesToUse = character.jumpImages;
+            this.imagesToUse = characterImages.jumpImages;
         } else if (this.isThrowing) {
-            this.imagesToUse = character.throwImages;
+            this.imagesToUse = characterImages.throwImages;
         } else if (this.isAttacking) {
-            this.imagesToUse = character.attackImages;
+            this.imagesToUse = characterImages.attackImages;
         } else if (this.isWalking) {
-            this.imagesToUse = character.walkImages;
+            this.imagesToUse = characterImages.walkImages;
         } else {
-            this.imagesToUse = character.idleImages;
+            this.imagesToUse = characterImages.idleImages;
         }
     }
 

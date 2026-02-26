@@ -47,19 +47,13 @@ class DrawableObject {
         if (path) this.img = this.imageCache[path];
     }
 
-
-    // setCurrentImage(imagesToUse) {  
-    //     let path = imagesToUse[this.currentAnimationFrame];
-    //     if (path) this.img = this.imageCache[path];
-    // }
-
     animateImages(imagesToUse, timer = 20) {
         this.getAnimationFrame('animationTimer', timer);
         this.setCurrentImage(imagesToUse);
     }
 
     checkEndAnimation() {
-        if (this.currentAnimationFrame >= this.imagesToUse.length - 1) return true
+        if ((this.currentAnimationFrame % this.imagesToUse.length) >= (this.imagesToUse.length - 1)) return true
         else return false
     }
 

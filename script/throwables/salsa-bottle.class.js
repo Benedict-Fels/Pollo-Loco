@@ -1,30 +1,11 @@
 
 class SalsaBottle extends ThrowableObject {
 
-    spinningImages = [
-        'img/6_salsa_bottle/bottle_rotation/180_bottle_rotation.png',
-        'img/6_salsa_bottle/bottle_rotation/225_bottle_rotation.png',
-        'img/6_salsa_bottle/bottle_rotation/270_bottle_rotation.png',
-        'img/6_salsa_bottle/bottle_rotation/315_bottle_rotation.png',
-        'img/6_salsa_bottle/bottle_rotation/0_bottle_rotation.png',
-        'img/6_salsa_bottle/bottle_rotation/45_bottle_rotation.png',
-        'img/6_salsa_bottle/bottle_rotation/90_bottle_rotation.png',
-        'img/6_salsa_bottle/bottle_rotation/135_bottle_rotation.png',
-    ]
-
-    splashImages = [
-        'img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png',
-        'img/6_salsa_bottle/bottle_rotation/bottle_splash/2_bottle_splash.png',
-        'img/6_salsa_bottle/bottle_rotation/bottle_splash/3_bottle_splash.png',
-        'img/6_salsa_bottle/bottle_rotation/bottle_splash/4_bottle_splash.png',
-        'img/6_salsa_bottle/bottle_rotation/bottle_splash/5_bottle_splash.png',
-        'img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png',
-    ]
     constructor(x, y, direction) {
         super(x, y, direction);
-        this.loadImages(this.spinningImages);
-        this.loadImages(this.splashImages);
-        this.img = this.imageCache[this.spinningImages[0]];
+        this.loadImages(salsaBottleImages.spinningImages);
+        this.loadImages(salsaBottleImages.splashImages);
+        this.img = this.imageCache[salsaBottleImages.spinningImages[0]];
         if (!this.x) {
             this.x = x;
         }
@@ -33,13 +14,13 @@ class SalsaBottle extends ThrowableObject {
     }
 
     animateRotation() {
-        this.animateImages(this.spinningImages, 5);
+        this.animateImages(salsaBottleImages.spinningImages, 5);
     }
 
     animateSplash() {
-        this.animateImages(this.splashImages, 10);
-        let i = (this.currentAnimationFrame % this.splashImages.length);
-        if (i >= this.splashImages.length - 1) {
+        this.animateImages(salsaBottleImages.splashImages, 10);
+        let i = (this.currentAnimationFrame % salsaBottleImages.splashImages.length);
+        if (i >= salsaBottleImages.splashImages.length - 1) {
             this.isGone = true;
         }
     }

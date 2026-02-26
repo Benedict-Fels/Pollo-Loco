@@ -9,14 +9,6 @@ class BossChicken extends DrawableObject {
     groundY = 200;
     attackIndex = 1;
     isWalking = true;
-    isStomping = false;
-    isLaying = false;
-    isCallingChicken = false;
-    hasAttacked = false;
-    gotDamaged = false;
-    isHurt = false;
-    isDead = false;
-    newFrame = false;
     damageInstance = 0;
     hurtAnimationTimer = 0;
     animationSpeed = 15;
@@ -29,13 +21,10 @@ class BossChicken extends DrawableObject {
         this.width = 300;
         this.height = 300;
         this.collisionOffset = { top: 70, left: 50, right: 50, bottom: 70 };
-        this.loadImages(bossChicken.walkImages);
-        this.loadImages(bossChicken.layImages);
-        this.loadImages(bossChicken.stompImages);
-        this.loadImages(bossChicken.callChickenImages);
-        this.loadImages(bossChicken.hurtImages);
-        this.loadImages(bossChicken.deadImages);
-        this.imagesToUse = bossChicken.walkImages;
+        Object.keys(bossChickenImages).forEach(stateImage => {
+            this.loadImages(bossChickenImages[stateImage]);
+        });
+        this.imagesToUse = bossChickenImages.walkImages;
         this.img = this.imageCache[this.imagesToUse[0]];
         this.checkAnimation();
     }
@@ -43,15 +32,15 @@ class BossChicken extends DrawableObject {
     checkAnimation() {
         this.facingLeft = true;
         // this.direction = 'left'
-        if (this.isDead) this.imagesToUse = bossChicken.deadImages;
-        else if (this.isHurt) this.imagesToUse = bossChicken.hurtImages;
-        else if (this.isStomping) this.imagesToUse = bossChicken.stompImages;
+        if (this.isDead) this.imagesToUse = bossChickenImages.deadImages;
+        else if (this.isHurt) this.imagesToUse = bossChickenImages.hurtImages;
+        else if (this.isStomping) this.imagesToUse = bossChickenImages.stompImages;
         else if (this.isLaying) {
-            this.imagesToUse = bossChicken.layImages;
+            this.imagesToUse = bossChickenImages.layImages;
             this.facingLeft = false;
             // this.direction = 'left'
-        } else if (this.isCallingChicken) this.imagesToUse = bossChicken.callChickenImages;
-        else if (this.isWalking) this.imagesToUse = bossChicken.walkImages;
+        } else if (this.isCallingChicken) this.imagesToUse = bossChickenImages.callChickenImages;
+        else if (this.isWalking) this.imagesToUse = bossChickenImages.walkImages;
     }
 
     getAttackPattern() {
@@ -131,8 +120,8 @@ class BossChicken extends DrawableObject {
 
     hurtAnimation() {
         this.getAnimationFrame('hurtAnimationTimer', this.animationSpeed);
-        this.setCurrentImage(bossChicken.hurtImages)
-        if (this.currentAnimationFrame == bossChicken.hurtImages.length - 1) {
+        this.setCurrentImage(bossChickenImages.hurtImages)
+        if (this.currentAnimationFrame == bossChickenImages.hurtImages.length - 1) {
             this.isHurt = false;
         }
     }

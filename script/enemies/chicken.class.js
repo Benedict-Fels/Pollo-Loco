@@ -14,9 +14,9 @@ class Chicken extends DrawableObject {
         this.height = 100;
         this.speed = speed;
         this.collisionOffset = { top: 20, left: 20, right: 20, bottom: 10 };
-        this.loadImages(chicken.walkImages);
-        this.loadImage(chicken.deadImage);
-        this.img = this.imageCache[chicken.walkImages[0]];
+        this.loadImages(chickenImages.walkImages);
+        this.loadImage(chickenImages.deadImage);
+        this.img = this.imageCache[chickenImages.walkImages[0]];
     }
 
     spawnChicken() {
@@ -26,7 +26,7 @@ class Chicken extends DrawableObject {
 
     chickenAnimation() {
         if (this.isDead) {
-            this.img = this.imageCache[chicken.deadImage];
+            this.img = this.imageCache[chickenImages.deadImage];
             this.speed = 0;
             setTimeout(() => {
                 this.isGone = true;
@@ -36,8 +36,8 @@ class Chicken extends DrawableObject {
         this.animationTimer = (this.animationTimer || 0) + 1;
         if (this.animationTimer % 20 !== 0) return;
         this.currentAnimationFrame = ((this.animationTimer / 20));
-        let i = (this.currentAnimationFrame % chicken.walkImages.length);
-        let path = chicken.walkImages[i];
+        let i = (this.currentAnimationFrame % chickenImages.walkImages.length);
+        let path = chickenImages.walkImages[i];
         this.img = this.imageCache[path];
     }
 

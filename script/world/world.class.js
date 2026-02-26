@@ -14,9 +14,10 @@ class World {
     ];
     throwableObjects = [];
     collectableBottles = [];
+    collectableNuggets = [];
+    backgroundRocks = [];
     enemies = [];
     groundLevel = 404;
-    gameStopped = false;
 
     WIDTH = 960;
     HEIGHT = 540;
@@ -26,16 +27,13 @@ class World {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.keyboard = keyboard;
-
         this.canvas.width = this.WIDTH;
         this.canvas.height = this.HEIGHT;
-
         this.initializeWorld();
     }
 
     initializeWorld() {
-        this.character = new Character();
-        this.character.world = this;
+        this.character = new Character(this);
         this.backgrounds = this.layerPaths.map(layer => {
             let bg = new Background(
                 `img/5_background/layers/${layer.name}/full.png`,
@@ -44,16 +42,33 @@ class World {
             return bg;
         });
         this.clouds = new Clouds(this.WIDTH, this.HEIGHT);
+        this.spawnBottles();
+        this.spawnRocks();
+        this.level = new levelOne(this);
+    }
+
+    spawnBottles() {
         for (let i = 0; i < 5; i++) {
-            let xBottlePos = 400 + Math.random() * 2000;
+            let xBottlePos = 400 + Math.random() * 400 + i * 800;
             this.collectableBottles.push(new CollectableBottle(xBottlePos, this.groundLevel));
         }
-        this.level = new levelOne();
-        this.level.world = this;
+    }
+
+    spawnRocks() {
+        for (let i = 0; i < 11; i++) {
+            let xRockPos = 200 + Math.random() * 400 + i * 400;
+            let randomType = Math.floor(Math.random() * 3) + 1;
+            let rock = new BackgroundRocks(xRockPos, this.groundLevel, randomType);
+            this.backgroundRocks.push(rock);
+            if (Math.random() < 0.5) {
+                let nuggetX = rock.x + rock.nuggetOffset.x;
+                let nuggetY = rock.y + rock.nuggetOffset.y;
+                this.collectableNuggets.push(new CollectibleGoldNuggets(nuggetX, nuggetY));
+            }
+        }
     }
 
     update() {
-        // this.character.stopWalking();
         this.getKeyboardInput();
         this.character.updateAnimation();
         this.enemies.forEach(enemy => {
@@ -67,17 +82,18 @@ class World {
         this.checkThrowObjects();
         this.checkCollisions();
         this.checkBottleCollection();
+        this.checkGoldCollection()
         this.cleanUpObjects();
     }
 
     getKeyboardInput() {
         if (this.keyboard.right) {
-        this.character.moveRight();
-    } else if (this.keyboard.left) {
-        this.character.moveLeft();
-    } else {
-        this.character.stopWalking();
-    }
+            this.character.moveRight();
+        } else if (this.keyboard.left) {
+            this.character.moveLeft();
+        } else {
+            this.character.stopWalking();
+        }
         if (this.keyboard.up) this.character.jump();
         if (this.keyboard.attack) this.character.attack();
         if (this.keyboard.throw) this.character.throwBottle();
@@ -94,11 +110,7 @@ class World {
         this.enemies.forEach((enemy) => {
             if (enemy.isDead) return;
             if (this.character.hasAttacked) {
-                let box = this.character.attackBox;
-                if (box.x + box.width > enemy.x + enemy.collisionOffset.left &&
-                    box.y + box.height > enemy.y + enemy.collisionOffset.top &&
-                    box.x < enemy.x + enemy.width - enemy.collisionOffset.right &&
-                    box.y < enemy.y + enemy.height - enemy.collisionOffset.bottom) {
+                if (this.checkAttackCollision(this.character, enemy)) {
                     this.dealDamage(enemy)
                 }
             }
@@ -106,11 +118,7 @@ class World {
                 this.character.recieveDamage();
             }
             if (enemy instanceof BossChicken && enemy.hasAttacked) {
-                let box = enemy.attackBox;
-                if (box.x + box.width > this.character.x + this.character.collisionOffset.left &&
-                    box.y + box.height > this.character.y + this.character.collisionOffset.top &&
-                    box.x < this.character.x + this.character.width - this.character.collisionOffset.right &&
-                    box.y < this.character.y + this.character.height - this.character.collisionOffset.bottom) {
+                if (this.checkAttackCollision(enemy, this.character)) {
                     if (!this.character.invincibility) {
                         this.character.recieveDamage()
                     }
@@ -133,8 +141,16 @@ class World {
         });
     }
 
+    checkAttackCollision(attacker, recipient) {
+        let box = attacker.attackBox;
+        return (box.x + box.width > recipient.x + recipient.collisionOffset.left &&
+            box.y + box.height > recipient.y + recipient.collisionOffset.top &&
+            box.x < recipient.x + recipient.width - recipient.collisionOffset.right &&
+            box.y < recipient.y + recipient.height - recipient.collisionOffset.bottom);
+    }
+
     dealDamage(enemy) {
-        if (enemy.isDead || enemy.isHurt) return;
+        if (enemy.isDead || enemy.gotDamaged) return;
         enemy.health -= 1;
         if (enemy.health <= 0) {
             enemy.isDead = true;
@@ -162,6 +178,16 @@ class World {
         });
     }
 
+    checkGoldCollection() {
+        this.collectableNuggets.forEach((nugget, index) => {
+            if (this.character.isColliding(nugget)) {
+                this.character.nuggets += 1;
+                console.log('Gold eingesammelt! Vorrat:', this.character.nuggets);
+                this.collectableNuggets.splice(index, 1);
+            }
+        });
+    }
+
     cleanUpObjects() {
         this.throwableObjects = this.throwableObjects.filter(obj => !obj.isGone);
         this.enemies = this.enemies.filter(enemy => {
@@ -176,7 +202,12 @@ class World {
         this.backgrounds.forEach(bg => {
             bg.draw(this.ctx, this.cameraOffset);
         });
-        // this.character.updateAnimation();
+        this.backgroundRocks.forEach(backgroundRock => {
+            backgroundRock.drawManual(this.ctx, this.cameraOffset);
+        });
+        this.collectableNuggets.forEach(nugget => {
+            nugget.drawManual(this.ctx, this.cameraOffset);
+        });
         this.character.drawManual(this.ctx, this.cameraOffset);
         this.character.drawHitbox(this.ctx, this.cameraOffset);
         this.enemies.forEach(enemy => {

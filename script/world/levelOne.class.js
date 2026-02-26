@@ -1,7 +1,8 @@
 
 class levelOne {
 
-    constructor() {
+    constructor(world) {
+        this.world = world;
     }
 
     checkFirstMovement() {
@@ -36,7 +37,7 @@ class levelOne {
 
     startWave3() {
         for (let i = 0; i < 8; i++) {
-            let xPos = -this.world.cameraOffset + this.world.WIDTH + Math.random() * 400 + i * 100;
+            let xPos = -this.world.cameraOffset + this.world.WIDTH + Math.random() * 400 + i * 200;
             let speed = 2 + 4 * Math.random();
             this.world.enemies.push(new Chicken(xPos, speed));
         }
@@ -45,7 +46,7 @@ class levelOne {
 
     startWave4() {
         for (let i = 0; i < 4; i++) {
-            let xPos = -this.world.cameraOffset + this.world.WIDTH + Math.random() * 400 + i * 100;
+            let xPos = -this.world.cameraOffset + this.world.WIDTH + Math.random() * 400 + i * 200;
             let speed = 1 + 6 * Math.random();
             this.world.enemies.push(new Chicken(xPos, speed));
         }
@@ -54,7 +55,7 @@ class levelOne {
 
     spawnChicken() {
         let xPos = -this.world.cameraOffset + this.world.WIDTH + Math.random() * 400;
-        let speed = 3;
+        let speed = 2 + 2 * Math.random();
         this.world.enemies.push(new Chicken(xPos, speed));
     }
 
