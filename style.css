@@ -163,9 +163,18 @@ h2 {
     justify-content: center;
     color: beige;
     height: 4cqi;
+    font-size: 2cqi;
     width: 100%;
 }
 
 .sound-controller span {
     width: 15cqi;
+}
+
+.key-box{
+    padding: 0.4cqi;
+    background-color: rgb(165,106,66);
+    font-size: 1.7cqi;
+    border: 0.4cqi solid rgb(239, 161, 109);
+    border-radius: 10px;
 }
