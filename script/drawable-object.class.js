@@ -47,7 +47,7 @@ class DrawableObject {
         if (path) this.img = this.imageCache[path];
     }
 
-    animateImages(imagesToUse, timer = 20) {
+    animateImages(imagesToUse, timer = 6) {
         this.getAnimationFrame('animationTimer', timer);
         this.setCurrentImage(imagesToUse);
     }

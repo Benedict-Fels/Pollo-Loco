@@ -40,8 +40,8 @@ class Chicken extends DrawableObject {
             return;
         }
         this.animationTimer = (this.animationTimer || 0) + 1;
-        if (this.animationTimer % 20 !== 0) return;
-        this.currentAnimationFrame = ((this.animationTimer / 20));
+        if (this.animationTimer % 6 !== 0) return;
+        this.currentAnimationFrame = ((this.animationTimer / 6));
         let i = (this.currentAnimationFrame % chickenImages.walkImages.length);
         let path = chickenImages.walkImages[i];
         this.img = this.imageCache[path];

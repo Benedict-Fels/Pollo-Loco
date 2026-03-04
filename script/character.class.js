@@ -1,7 +1,7 @@
 
 class Character extends DrawableObject {
     speed = 5;
-    acceleration = 2;
+    acceleration = 4;
     direction = 'right';
     health = 10;
     bottleInventory = 5;
@@ -45,7 +45,7 @@ class Character extends DrawableObject {
 
     jump() {
         if (!this.isJumping) {
-            this.speedY = 22;
+            this.speedY = 30;
             this.setState('isJumping');
         }
     }
@@ -70,12 +70,12 @@ class Character extends DrawableObject {
     updateAnimation() {
         this.checkAnimation();
         if (this.isAttacking || this.isThrowing) {
-            this.characterAnimation(this.imagesToUse, 3);
+            this.characterAnimation(this.imagesToUse, 2);
             if (this.checkEndAnimation()) {
                 this.triggerEndFrameActions();
             }
         } else {
-            this.characterAnimation(this.imagesToUse, 10);
+            this.characterAnimation(this.imagesToUse, 6);
         }
     }
 
@@ -128,7 +128,7 @@ class Character extends DrawableObject {
         }, 500);
     }
 
-    characterAnimation(imagesToUse, timer = 10) {
+    characterAnimation(imagesToUse, timer = 6) {
         this.getAnimationFrame('animationTimer', timer);
         if (this.newFrame) {
             this.setCurrentImage(imagesToUse);
