@@ -22,12 +22,6 @@ class levelOne {
         this.bossHealthBar = new BossHealthBar();
     }
 
-    // drawBossBar(ctx) {
-    // if (this.bossWave && this.boss) {
-    //     this.bossHealthBar.draw(ctx, this.boss.health, 10);
-    // }
-// }
-
     startWave1() {
         for (let i = 0; i < 4; i++) {
             let xPos = -this.world.cameraOffset + this.world.WIDTH + (i * 500);

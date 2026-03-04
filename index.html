@@ -14,7 +14,23 @@
 
 <body>
     <h1>El Pollo Loco</h1>
-    <canvas id="canvasID"></canvas>
+    <div class="game-container">
+        <div id="woodSignID" class="woodsign-div">
+        </div>
+        <div id="startDivID" class="overlay intro">
+            <img class="start-intro" src="./img/9_intro_outro_screens/start/startscreen_3_large.png" alt="">
+            <p class="start-button" onclick="startGame()">Start</p>
+            <p class="control-button" onclick="processControlsClick()">Controls</p>
+            <p class="sound-button" onclick="processSoundsClick()">Sound</p>
+            <p class="fullscreen-button" onclick="toggleFullscreen()">Fullscreen</p>
+        </div>
+        <div id="outroDivID" class="overlay outro vis-none">
+            <img id="outroImageID" class="endscreen" src=""
+                alt="">
+        </div>
+        <canvas id="canvasID">
+        </canvas>
+    </div>
     <script src="script/image-config.js"></script>
     <script src="script/drawable-object.class.js"></script>
     <script src="script/collectable-bottle.class.js"></script>
@@ -31,6 +47,7 @@
     <script src="script/world/background.class.js"></script>
     <script src="script/world/clouds.class.js"></script>
     <script src="script/keyboard-input.class.js"></script>
+    <script src="script/audio.js"></script>
     <script src="script/world/world.class.js"></script>
     <script src="script/world/levelOne.class.js"></script>
     <script src="script/script.js"></script>

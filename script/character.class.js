@@ -3,7 +3,7 @@ class Character extends DrawableObject {
     speed = 7;
     acceleration = 2;
     direction = 'right';
-    health = 200;
+    health = 10;
     bottleInventory = 5;
     nuggets = 0;
     currentAnimationFrame = 0;
@@ -57,7 +57,7 @@ class Character extends DrawableObject {
     }
 
     throwBottle() {
-        if (!this.isAttacking && !this.isJumping && this.bottleInventory > 0) {
+        if (!this.isThrowing && !this.isAttacking && !this.isJumping && this.bottleInventory > 0) {
             this.setState('isThrowing');
         }
     }
@@ -83,7 +83,6 @@ class Character extends DrawableObject {
         this.isAttacking = false;
         if (this.isThrowing) {
             this.bottleInventory -= 1;
-            console.log('Flasche geworfen! Verbleibender Vorrat:', this.bottleInventory);
             this.spawnBottle();
             this.isThrowing = false;
         }
@@ -108,17 +107,20 @@ class Character extends DrawableObject {
             this.y + 50,
             this.direction,
         );
+        throwSound.play();
         this.world.throwableObjects.push(bottle);
     }
 
     recieveDamage() {
-        if (this.invincibility) return;
+        if (this.invincibility || this.health <= 0) return;
         this.health -= 1;
         if (this.health <= 0) {
             this.isDead = true;
+            characterDeadSound.play();
             return
         }
         this.isHurt = true;
+        characterHurtSound.play();
         this.invincibility = true;
         setTimeout(() => {
             this.isHurt = false;
@@ -131,11 +133,10 @@ class Character extends DrawableObject {
         if (this.newFrame) {
             this.setCurrentImage(imagesToUse);
             if (this.isDead && this.checkEndAnimation()) {
-                // setTimeout(() => {
                 console.log(`Ende`);
                 this.world.gameStopped = true;
-
-                // }, 1150);
+                setOutroDiv('lost');
+                outroDivRef.classList.remove('vis-none');
             };
             this.checkHasAttacked();
         }
@@ -150,21 +151,13 @@ class Character extends DrawableObject {
     }
 
     checkAnimation() {
-        if (this.isDead) {
-            this.imagesToUse = characterImages.deadImages;
-        } else if (this.isHurt) {
-            this.imagesToUse = characterImages.hurtImages;
-        } else if (this.isJumping) {
-            this.imagesToUse = characterImages.jumpImages;
-        } else if (this.isThrowing) {
-            this.imagesToUse = characterImages.throwImages;
-        } else if (this.isAttacking) {
-            this.imagesToUse = characterImages.attackImages;
-        } else if (this.isWalking) {
-            this.imagesToUse = characterImages.walkImages;
-        } else {
-            this.imagesToUse = characterImages.idleImages;
-        }
+        if (this.isDead) this.imagesToUse = characterImages.deadImages;
+        else if (this.isHurt) this.imagesToUse = characterImages.hurtImages;
+        else if (this.isJumping) this.imagesToUse = characterImages.jumpImages;
+        else if (this.isThrowing) this.imagesToUse = characterImages.throwImages;
+        else if (this.isAttacking) this.imagesToUse = characterImages.attackImages;
+        else if (this.isWalking) this.imagesToUse = characterImages.walkImages;
+        else this.imagesToUse = characterImages.idleImages;
     }
 
     moveLeft() {
@@ -203,11 +196,4 @@ class Character extends DrawableObject {
             ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
         }
     }
-    // drawHitbox(ctx, cameraOffset) {
-    //     ctx.beginPath();
-    //     ctx.rect(this.x + this.collisionOffset.left + cameraOffset, this.y + this.collisionOffset.top,
-    //         this.width - this.collisionOffset.left - this.collisionOffset.right,
-    //         this.height - this.collisionOffset.top - this.collisionOffset.bottom);
-    //     ctx.stroke();
-    // }
 }

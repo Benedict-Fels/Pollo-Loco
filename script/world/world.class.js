@@ -47,20 +47,19 @@ class World {
         this.clouds = new Clouds(this.WIDTH, this.HEIGHT);
         this.spawnBottles();
         this.spawnRocks();
-
         this.level = new levelOne(this);
     }
 
     spawnBottles() {
         for (let i = 0; i < 5; i++) {
-            let xBottlePos = 400 + Math.random() * 400 + i * 800;
+            let xBottlePos = 400 + Math.random() * 400 + i * 1200;
             this.collectableBottles.push(new CollectableBottle(xBottlePos, this.groundLevel));
         }
     }
 
     spawnRocks() {
         for (let i = 0; i < 11; i++) {
-            let xRockPos = 200 + Math.random() * 400 + i * 400;
+            let xRockPos = 200 + Math.random() * 400 + i * 500;
             let randomType = Math.floor(Math.random() * 3) + 1;
             let rock = new BackgroundRocks(xRockPos, this.groundLevel, randomType);
             this.backgroundRocks.push(rock);
@@ -140,6 +139,7 @@ class World {
                 if (obj instanceof BossEgg) {
                     if (obj.isColliding(this.character) && !obj.isSplashing) {
                         this.character.recieveDamage();
+                        eggCrackSound.play();
                         obj.isSplashing = true;
                     }
                 }
@@ -159,6 +159,7 @@ class World {
         if (enemy.isDead || enemy.gotDamaged) return;
         enemy.health -= 1;
         if (enemy.health <= 0) {
+            chickenDeadSound.play();
             enemy.isDead = true;
         }
         if (enemy instanceof BossChicken) {
@@ -168,6 +169,7 @@ class World {
                 enemy.currentAnimationFrame = 0;
             } else {
                 enemy.gotDamaged = true;
+                bossChickenDamageSound.play();
             }
             enemy.checkAnimation();
         }
@@ -176,6 +178,8 @@ class World {
     checkBottleCollection() {
         this.collectableBottles.forEach((bottle, index) => {
             if (this.character.isColliding(bottle)) {
+                collectSound.currentTime = 0;
+                collectSound.play();
                 this.character.bottleInventory += 1;
                 this.collectableBottles.splice(index, 1);
             }
@@ -185,6 +189,8 @@ class World {
     checkGoldCollection() {
         this.collectableNuggets.forEach((nugget, index) => {
             if (this.character.isColliding(nugget)) {
+                collectSound.currentTime = 0;
+                collectSound.play();
                 this.character.nuggets += 1;
                 this.collectableNuggets.splice(index, 1);
             }
@@ -205,12 +211,9 @@ class World {
         this.backgrounds.forEach(bg => {
             bg.draw(this.ctx, this.cameraOffset);
         });
-        // this.backgrounds[0].draw(this.ctx, this.cameraOffset);
-        // this.backgrounds[1].draw(this.ctx, this.cameraOffset);
         this.backgroundRocks.forEach(backgroundRock => {
             backgroundRock.drawManual(this.ctx, this.cameraOffset);
         });
-        // this.backgrounds[2].draw(this.ctx, this.cameraOffset);
         this.collectableNuggets.forEach(nugget => {
             nugget.drawManual(this.ctx, this.cameraOffset);
         });

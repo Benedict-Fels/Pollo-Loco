@@ -3,7 +3,7 @@ class ThrowableObject extends DrawableObject {
     speedY = 30;
     speedX = 20;
     acceleration = 2;
-    groundLevel = 404; 
+    groundLevel = 404;
     collisionOffset = {
         top: 10,
         left: 10,
@@ -21,18 +21,18 @@ class ThrowableObject extends DrawableObject {
     }
 
     applyPhysics() {
-        this.isSplashing = false;
-    let physicsInterval = setInterval(() => {
-        if (this.isSplashing) {
-            if (this.speedX !== 0 || this.speedY !== 0) {
-                this.animationTimer = 0;
-                this.speedX = 0;
-                this.speedY = 0;
+        let physicsInterval = setInterval(() => {
+            if (this.isSplashing) {
+                if (this.speedX !== 0 || this.speedY !== 0) {
+                    this.animationTimer = 0;
+                    this.speedX = 0;
+                    this.speedY = 0;
+                    this.playSound();
+                }
+                this.animateSplash();
+                if (this.isGone) clearInterval(physicsInterval);
+                return;
             }
-            this.animateSplash();
-            if (this.isGone) clearInterval(physicsInterval);
-            return;
-        }
             this.x += (this.direction === 'right') ? this.speedX : -this.speedX;
 
             if (this.y < this.groundLevel || this.speedY > 0) {
@@ -41,16 +41,26 @@ class ThrowableObject extends DrawableObject {
                 this.speedY -= this.acceleration;
             } else {
                 this.isSplashing = true;
+                this.playSound();
                 this.animationTimer = 0;
                 this.speedY = 0;
                 this.speedX = 0;
             }
         }, 1000 / 60);
     }
-    
-    animateRotation() {}
-    animateSplash() {}
-    
+
+    playSound() {
+        if (this instanceof SalsaBottle) {
+            bottleBreakSound.play();
+        }
+        if (this instanceof BossEgg) {
+            eggCrackSound.play();
+        }
+    }
+
+    animateRotation() { }
+    animateSplash() { }
+
     draw(ctx, cameraOffset) {
         if (this.img) {
             ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
