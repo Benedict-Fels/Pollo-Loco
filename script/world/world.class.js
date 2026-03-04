@@ -1,5 +1,7 @@
 
 class World {
+    lastFrameTime = 0;
+    fpsInterval = 1000 / 60;
     canvas;
     ctx;
     character;
@@ -248,10 +250,20 @@ class World {
         }
     }
 
-    gameLoop() {
+    gameLoop(time) {
         if (this.gameStopped) return;
+        this.limitFrames(time);
         this.update();
         this.draw();
-        requestAnimationFrame(() => this.gameLoop());
+        requestAnimationFrame(() => this.gameLoop(time));
     }
+
+    limitFrames(currentTime) {
+        if (!this.lastFrameTime) this.lastFrameTime = currentTime;
+        const elapsed = currentTime - this.lastFrameTime;
+        if (elapsed >= this.fpsInterval) {
+            this.lastFrameTime = currentTime - (elapsed % this.fpsInterval);
+        }
+    }
+
 }
