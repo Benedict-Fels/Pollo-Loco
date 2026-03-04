@@ -4,7 +4,7 @@ class BossChicken extends DrawableObject {
     direction = 'left';
     currentAnimationFrame = 0;
     chickenDistance = 0;
-    health = 2;
+    health = 20;
     speed = 2;
     groundY = 200;
     attackIndex = 1;

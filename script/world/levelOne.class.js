@@ -8,8 +8,8 @@ class levelOne {
     checkFirstMovement() {
         if (this.world.character.movingDirection !== 0 && !this.world.character.isPlaying) {
             this.world.character.isPlaying = true;
-            // this.startWave1();
-            this.startBossWave();
+            this.startWave1();
+            // this.startBossWave();
         }
     }
 
@@ -40,7 +40,7 @@ class levelOne {
     startWave3() {
         for (let i = 0; i < 8; i++) {
             let xPos = -this.world.cameraOffset + this.world.WIDTH + Math.random() * 400 + i * 200;
-            let speed = 2 + 4 * Math.random();
+            let speed = 1.5 + 3 * Math.random();
             this.world.enemies.push(new Chicken(xPos, speed));
         }
         this.wave3 = true;
@@ -49,7 +49,7 @@ class levelOne {
     startWave4() {
         for (let i = 0; i < 4; i++) {
             let xPos = -this.world.cameraOffset + this.world.WIDTH + Math.random() * 400 + i * 200;
-            let speed = 1 + 6 * Math.random();
+            let speed = 1 + 4.5 * Math.random();
             this.world.enemies.push(new Chicken(xPos, speed));
         }
         this.wave4 = true;
