@@ -8,7 +8,10 @@ const soundFiles = {
     throwSound: './sound/throw.mp3',
     collectSound: './sound/collect.wav',
     characterHurtSound: './sound/character/character_damage.mp3',
-    characterDeadSound: './sound/character/character_dead.wav'
+    characterDeadSound: './sound/character/character_dead.wav',
+    characterJumpSound: './sound/character/character_jump.mp3',
+    characterWarcrySound: './sound/character/hit5.mp3',
+    characterSleepingSound: './sound/character/character_snoring.mp3'
 }; 
 Object.keys(soundFiles).forEach(key => {
     let audio = new Audio(soundFiles[key]); 

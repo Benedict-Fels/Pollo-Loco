@@ -76,6 +76,9 @@ class World {
     }
 
     update() {
+        // console.log('animationTimer', this.character.animationTimer);
+        // console.log('currentAnimationFrame',this.character.currentAnimationFrame);
+        
         this.getKeyboardInput();
         this.character.updateAnimation();
         this.enemies.forEach(enemy => {

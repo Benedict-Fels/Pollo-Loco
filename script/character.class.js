@@ -7,7 +7,6 @@ class Character extends DrawableObject {
     bottleInventory = 5;
     nuggets = 0;
     currentAnimationFrame = 0;
-    animationCounter = 0;
 
     constructor(world) {
         super();
@@ -47,12 +46,14 @@ class Character extends DrawableObject {
         if (!this.isJumping) {
             this.speedY = 30;
             this.setState('isJumping');
+            characterJumpSound.play();
         }
     }
 
     attack() {
         if (!this.isAttacking && !this.isJumping && !this.isWalking) {
             this.setState('isAttacking');
+            characterWarcrySound.play();
         }
     }
 
@@ -143,7 +144,7 @@ class Character extends DrawableObject {
     }
 
     checkHasAttacked() {
-        if (this.isAttacking && this.currentAnimationFrame >= 8) {
+        if (this.isAttacking && this.currentAnimationFrame == 8) {
             this.hasAttacked = true
         }
         else
@@ -157,12 +158,19 @@ class Character extends DrawableObject {
         else if (this.isThrowing) this.imagesToUse = characterImages.throwImages;
         else if (this.isAttacking) this.imagesToUse = characterImages.attackImages;
         else if (this.isWalking) this.imagesToUse = characterImages.walkImages;
+        else if (this.currentAnimationFrame >= 30) {
+            this.imagesToUse = characterImages.sleepImages;
+            characterSleepingSound.play();
+        }
         else this.imagesToUse = characterImages.idleImages;
     }
 
     moveLeft() {
         this.isAttacking = false;
-        this.isWalking = true;
+        this.isIdling = false;
+        if (!this.isWalking) {
+            this.setState('isWalking');
+        }
         this.movingDirection = -1;
         this.direction = 'left';
         this.x -= this.speed;
@@ -171,7 +179,10 @@ class Character extends DrawableObject {
 
     moveRight() {
         this.isAttacking = false;
-        this.isWalking = true;
+        this.isIdling = false;
+        if (!this.isWalking) {
+            this.setState('isWalking');
+        }
         this.movingDirection = 1;
         this.direction = 'right';
         this.x += this.speed;
@@ -181,8 +192,11 @@ class Character extends DrawableObject {
     stopWalking() {
         this.isWalking = false;
         this.movingDirection = 0;
-        this.currentAnimationFrame = 0;
-        this.animationCounter = 0;
+        if (!this.isIdling) {
+            this.currentAnimationFrame = 0;
+            this.animationTimer = 0;
+        }
+        this.isIdling = true;
     }
 
     drawManual(ctx, cameraOffset) {

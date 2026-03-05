@@ -126,7 +126,7 @@ h2 {
 
 .woodsign-div p {
     font-size: 2cqi;
-    margin-bottom: 2cqi;
+    margin-bottom: 1.15cqi;
 }
 
 .outro {
@@ -156,7 +156,7 @@ h2 {
     transform: translateY(0);
 }
 
-.dis-none{
+.dis-none {
     display: none;
 }
 
@@ -174,12 +174,40 @@ h2 {
     width: 15cqi;
 }
 
-.key-box {
+/* .key-box {
     padding: 0.4cqi;
     background-color: rgb(165, 106, 66);
     font-size: 1.7cqi;
     border: 0.4cqi solid rgb(239, 161, 109);
     border-radius: 10px;
+    width: 2.7cqi;
+} */
+
+.key-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 3cqi;
+    height: 3cqi;
+    padding: 0 8px;
+    margin: 0 4px;
+    /* background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(0, 0, 0, 0.1));
+    /* color: #fceabb; */
+    /* border: 2px solid #5d3a1a; */
+    background: #f1e7d0;
+    color: #4b3621;
+    border: 2px solid #d2b48c;
+    /* background: #3d2b1f;
+    color: #d4af37;
+    border: 2px solid #2a1d15; */
+    border-radius: 8px;
+    /* Ein helles Creme/Gold statt reinem Weiß */
+    font-family: 'Zilla Slab', serif;
+    /* Falls vorhanden, sonst eine Serif-Schrift */
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .quick-settings-icons {
@@ -201,26 +229,45 @@ h2 {
 
 .quick-settings-icons img:hover {
     cursor: pointer;
-    transform:scale(1.2);
+    transform: scale(1.2);
 }
 
 .inverted-color {
     filter: invert(100%);
 }
 
-.quick-settings{
+.quick-settings {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.quick-settings p{
+.quick-settings p {
     font-size: 2.5cqi;
     margin-bottom: 4.2cqi;
 }
 
-.quick-settings p:hover{
+.quick-settings p:hover {
     cursor: pointer;
-    transform:scale(1.2);
+    transform: scale(1.2);
     text-decoration: underline;
+}
+
+.mobile-controls {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    bottom: 2cqi;
+    width: 100%;
+    padding: 0 2cqi;
+    box-sizing: border-box;
+    pointer-events: none; /* Verhindert, dass das Div das Canvas blockiert */
+}
+
+.mobile-controls p {
+    pointer-events: auto;
+    width: 5cqi;
+    height: 5cqi;
+    opacity: 0.9;
+    user-select: none;
 }

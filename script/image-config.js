@@ -10,6 +10,17 @@ const characterImages = {
         'img/2_character_pepe/1_idle/idle/I-9.png',
         'img/2_character_pepe/1_idle/idle/I-10.png',
     ],
+    sleepImages: [
+        'img/2_character_pepe/1_idle/long_idle/I-11.png',
+        'img/2_character_pepe/1_idle/long_idle/I-12.png',
+        'img/2_character_pepe/1_idle/long_idle/I-13.png',
+        'img/2_character_pepe/1_idle/long_idle/I-14.png',
+        'img/2_character_pepe/1_idle/long_idle/I-15.png',
+        'img/2_character_pepe/1_idle/long_idle/I-16.png',
+        'img/2_character_pepe/1_idle/long_idle/I-17.png',
+        'img/2_character_pepe/1_idle/long_idle/I-19.png',
+        'img/2_character_pepe/1_idle/long_idle/I-20.png',
+    ],
     walkImages: [
         'img/2_character_pepe/2_walk/W-21.png',
         'img/2_character_pepe/2_walk/W-22.png',
@@ -40,6 +51,8 @@ const characterImages = {
         'img/2_character_pepe/6_attack/A-8-flipped.png',
         'img/2_character_pepe/6_attack/A-9-flipped.png',
         'img/2_character_pepe/6_attack/A-10-flipped.png',
+        'img/2_character_pepe/6_attack/A-3-flipped.png',
+        'img/2_character_pepe/6_attack/A-2-flipped.png',
     ],
     throwImages: [
         'img/2_character_pepe/6_attack/A-1-flipped.png',
