@@ -2,6 +2,7 @@
 class World {
     lastFrameTime = 0;
     fpsInterval = 1000 / 60;
+
     canvas;
     ctx;
     character;
@@ -29,6 +30,7 @@ class World {
     goldBar = new IconBar(20, 120, 'img/7_statusbars/3_icons/nugget1.png');
 
     constructor(canvas, keyboard) {
+        this.animationFrameId = null;
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.keyboard = keyboard;
@@ -253,17 +255,38 @@ class World {
     gameLoop(time) {
         if (this.gameStopped) return;
         this.limitFrames(time);
-        this.update();
-        this.draw();
-        requestAnimationFrame(() => this.gameLoop(time));
+        if (!settingsWoodSign && !controlsWoodSign && !soundsWoodSign) {
+            this.update();
+            this.draw();
+        }
+        this.animationFrameId = requestAnimationFrame((t) => this.gameLoop(t));
     }
 
+    stopGame() {
+        this.gameStopped = true;
+        if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = null;
+        }
+    }
+
+
+
     limitFrames(currentTime) {
-        if (!this.lastFrameTime) this.lastFrameTime = currentTime;
+        // if (!this.lastFrameTime) this.lastFrameTime = currentTime;
         const elapsed = currentTime - this.lastFrameTime;
         if (elapsed >= this.fpsInterval) {
             this.lastFrameTime = currentTime - (elapsed % this.fpsInterval);
         }
     }
+
+    //     limitFrames(currentTime) {
+    //     const elapsed = currentTime - this.lastFrameTime;
+    //     if (elapsed >= this.fpsInterval) {
+    //         this.lastFrameTime = currentTime - (elapsed % this.fpsInterval);
+    //         return true; 
+    //     }
+    //     return false;
+    // }
 
 }

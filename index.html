@@ -17,6 +17,11 @@
     <div class="game-container">
         <div id="woodSignID" class="woodsign-div">
         </div>
+        <div id="quickSettingsID" class="quick-settings-icons">
+            <img id="soundIconID" onclick="processSoundClick()" onmousedown="registerClick('sound')" onmouseup="resetClick('sound')" src="./img/12_icons/volume.png" alt="Music icon">
+            <img id="settingsIconID" class="dis-none" onclick="openSettings()" onmousedown="registerClick('settings')" onmouseup="resetClick('settings')" src="./img/12_icons/settings.png" alt="Settings Icon">
+            <img id="fullscreenIconID" onclick="toggleFullscreen()" onmousedown="registerClick('fullscreen')" onmouseup="resetClick('fullscreen')" src="./img/12_icons/fullscreen.png" alt="Fullscreen Icon">
+        </div>
         <div id="startDivID" class="overlay intro">
             <img class="start-intro" src="./img/9_intro_outro_screens/start/startscreen_3_large.png" alt="">
             <p class="start-button" onclick="startGame()">Start</p>
@@ -24,9 +29,8 @@
             <p class="sound-button" onclick="processSoundsClick()">Sound</p>
             <p class="fullscreen-button" onclick="toggleFullscreen()">Fullscreen</p>
         </div>
-        <div id="outroDivID" class="overlay outro vis-none">
-            <img id="outroImageID" class="endscreen" src=""
-                alt="">
+        <div id="outroDivID" class="overlay outro dis-none">
+            <img id="outroImageID" class="endscreen" src="" alt="">
         </div>
         <canvas id="canvasID">
         </canvas>

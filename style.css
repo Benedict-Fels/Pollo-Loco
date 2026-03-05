@@ -17,6 +17,7 @@ body {
 }
 
 h1 {
+    margin-bottom: 2cqi;
     text-align: center;
     color: rgb(234, 234, 33);
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
@@ -68,6 +69,7 @@ canvas {
 .overlay p:hover {
     transform: scale(1.25);
     cursor: pointer;
+    text-decoration: underline;
 }
 
 .overlay img {
@@ -119,22 +121,22 @@ h2 {
     color: beige;
     z-index: 3;
     font-size: 3.2cqi;
-    padding-bottom: 3.2cqi;
+    margin-bottom: 3.2cqi;
 }
 
 .woodsign-div p {
     font-size: 2cqi;
-    padding-bottom: 2cqi;
+    margin-bottom: 2cqi;
 }
 
-.outro{
+.outro {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .outro img {
-    height:70%;
+    height: 70%;
     object-fit: contain;
 }
 
@@ -147,13 +149,14 @@ h2 {
 .restart-button:hover {
     transform: scale(1.25);
     cursor: pointer;
+    text-decoration: underline;
 }
 
 .visible {
     transform: translateY(0);
 }
 
-.vis-none {
+.dis-none{
     display: none;
 }
 
@@ -171,10 +174,53 @@ h2 {
     width: 15cqi;
 }
 
-.key-box{
+.key-box {
     padding: 0.4cqi;
-    background-color: rgb(165,106,66);
+    background-color: rgb(165, 106, 66);
     font-size: 1.7cqi;
     border: 0.4cqi solid rgb(239, 161, 109);
     border-radius: 10px;
+}
+
+.quick-settings-icons {
+    position: absolute;
+    top: 3cqi;
+    right: 5cqi;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 3cqi;
+    width: 18%;
+}
+
+.quick-settings-icons img {
+    height: 4cqi;
+    object-fit: contain;
+}
+
+.quick-settings-icons img:hover {
+    cursor: pointer;
+    transform:scale(1.2);
+}
+
+.inverted-color {
+    filter: invert(100%);
+}
+
+.quick-settings{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.quick-settings p{
+    font-size: 2.5cqi;
+    margin-bottom: 4.2cqi;
+}
+
+.quick-settings p:hover{
+    cursor: pointer;
+    transform:scale(1.2);
+    text-decoration: underline;
 }

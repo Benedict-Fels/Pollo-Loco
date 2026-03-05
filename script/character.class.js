@@ -1,6 +1,6 @@
 
 class Character extends DrawableObject {
-    speed = 5;
+    speed = 6;
     acceleration = 4;
     direction = 'right';
     health = 10;

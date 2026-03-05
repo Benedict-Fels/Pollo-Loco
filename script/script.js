@@ -2,11 +2,20 @@ const canvas = document.getElementById('canvasID');
 const startDivRef = document.getElementById('startDivID');
 const outroDivRef = document.getElementById('outroDivID');
 const woodSignRef = document.getElementById('woodSignID');
+const iconRefs = {
+    settings: document.getElementById('settingsIconID'),
+    sound: document.getElementById('soundIconID'),
+    fullscreen: document.getElementById('fullscreenIconID')
+};
+let settingsOpen = false;
 let controlsWoodSign = false;
 let soundsWoodSign = false;
+let settingsWoodSign = false;
 let world;
 let keyboard;
-let volSettings = { general: 0.5, music: 0.5, effects: 0.5};
+let volSettings = { general: 0.5, music: 0.5, effects: 0.5 };
+let volSettingsCopy = {};
+let soundMuted = false;
 
 function toggleFullscreen() {
     let container = document.querySelector('.game-container');
@@ -25,12 +34,63 @@ function toggleFullscreen() {
     }
 }
 
-function processControlsClick() {
-    if (soundsWoodSign) {
+function registerClick(icon) {
+    iconRefs[icon].classList.add('inverted-color');
+}
+
+function resetClick(icon) {
+    iconRefs[icon].classList.remove('inverted-color');
+}
+
+function openSettings() {
+    if (controlsWoodSign || soundsWoodSign) {
         woodSignRef.classList.remove('visible');
-        soundsWoodSign = false;
+        setTimeout(() => {
+            openSettingsSign();
+            controlsWoodSign = false;
+            soundsWoodSign = false;
+        }, 300);
+    } else {
+        openSettingsSign();
+    }
+}
+
+function openSettingsSign() {
+    settingsTemplate();
+    woodSignRef.classList.toggle('visible');
+    settingsWoodSign = !settingsWoodSign;
+}
+
+function processSoundClick() {
+    if (soundMuted) {
+        unmuteSound();
+        iconRefs.sound.src = './img/12_icons/volume.png'
+    } else {
+        muteSound();
+        iconRefs.sound.src = './img/12_icons/muted.png'
+    }
+}
+
+function muteSound() {
+    volSettingsCopy = { ...volSettings };
+    volSettings = { general: 0, music: 0, effects: 0 };
+    updateVolume();
+    soundMuted = true;
+}
+
+function unmuteSound() {
+    volSettings = volSettingsCopy;
+    updateVolume();
+    soundMuted = false;
+}
+
+function processControlsClick() {
+    if (soundsWoodSign || settingsWoodSign) {
+        woodSignRef.classList.remove('visible');
         setTimeout(() => {
             openControlsSign();
+            soundsWoodSign = false;
+            settingsWoodSign = false;
         }, 300);
     } else {
         openControlsSign();
@@ -44,11 +104,12 @@ function openControlsSign() {
 }
 
 function processSoundsClick() {
-    if (controlsWoodSign) {
+    if (controlsWoodSign || settingsWoodSign) {
         woodSignRef.classList.remove('visible');
-        controlsWoodSign = false;
         setTimeout(() => {
             openSoundsSign();
+            controlsWoodSign = false;
+            settingsWoodSign = false;
         }, 300);
     } else {
         openSoundsSign();
@@ -58,18 +119,22 @@ function processSoundsClick() {
 function openSoundsSign() {
     soundsTemplate();
     requestAnimationFrame(() => {
-        document.getElementById('generalInputID').addEventListener('input', updateVolume);
-        document.getElementById('musicInputID').addEventListener('input', updateVolume);
-        document.getElementById('soundInputID').addEventListener('input', updateVolume);
+        document.getElementById('generalInputID').addEventListener('input', getVolume);
+        document.getElementById('musicInputID').addEventListener('input', getVolume);
+        document.getElementById('soundInputID').addEventListener('input', getVolume);
     })
     woodSignRef.classList.toggle('visible');
     soundsWoodSign = !soundsWoodSign;
 }
 
-function updateVolume() {
+function getVolume() {
     volSettings.general = document.getElementById('generalInputID').value / 100;
     volSettings.music = document.getElementById('musicInputID').value / 100;
     volSettings.effects = document.getElementById('soundInputID').value / 100;
+    updateVolume();
+}
+
+function updateVolume() {
     let generalFactor = 0.3;
     if (music) {
         music.volume = volSettings.music * volSettings.general * generalFactor;
@@ -86,8 +151,12 @@ function updateVolume() {
 
 function startGame() {
     woodSignRef.classList.remove('visible');
-    startDivRef.classList.add('vis-none');
-    canvas.classList.remove('vis-none');
+    controlsWoodSign = false;
+    settingsWoodSign = false;
+    soundsWoodSign = false;
+    iconRefs.settings.classList.remove('dis-none');
+    startDivRef.classList.add('dis-none');
+    canvas.classList.remove('dis-none');
     keyboard = new KeyboardInput();
     music.play();
     world = new World(canvas, keyboard);
@@ -96,30 +165,32 @@ function startGame() {
 
 function setOutroDiv(outcome) {
     const outroImageRef = document.getElementById('outroImageID');
-    if (outcome === 'lost') {
-        console.log('you lost');
-        outroImageRef.src = './img/9_intro_outro_screens/game_over2.png';
-    }
-    if (outcome === 'won') {
-        outroImageRef.src = './img/9_intro_outro_screens/you_win.png';
-        console.log('you won');
-    }
+    if (outcome === 'lost') outroImageRef.src = './img/9_intro_outro_screens/game_over2.png';
+    if (outcome === 'won') outroImageRef.src = './img/9_intro_outro_screens/you_win.png';
     setTimeout(() => {
-        woodSignRef.style.backgroundImage = 'url(./img/9_intro_outro_screens/start/wooden_sign_top_small2.png)';
-        woodSignRef.style.paddingTop = '9%'
-        woodSignRef.innerHTML = `<h3 class="restart-button" onclick="restartGame()">Return</h3>`
-        woodSignRef.classList.add('visible');
+        showReturnSign();
     }, 1000);
+}
+
+function showReturnSign() {
+    woodSignRef.style.backgroundImage = 'url(./img/9_intro_outro_screens/start/wooden_sign_top_small2.png)';
+    woodSignRef.style.paddingTop = '9%'
+    woodSignRef.innerHTML = `<h3 class="restart-button" onclick="restartGame()">Return</h3>`
+    woodSignRef.classList.add('visible');
+
 }
 
 function restartGame() {
     console.log('restart Game');
-    startDivRef.classList.remove('vis-none');
-    outroDivRef.classList.add('vis-none');
-    canvas.classList.add('vis-none');
+    startDivRef.classList.remove('dis-none');
+    outroDivRef.classList.add('dis-none');
+    canvas.classList.add('dis-none');
     woodSignRef.style.backgroundImage = 'url(./img/9_intro_outro_screens/start/wooden_sign_top2.png)';
     woodSignRef.style.paddingTop = '16%'
     woodSignRef.classList.remove('visible');
+    if (world) {
+        world.stopGame();
+    }
     world = null;
 }
 
@@ -132,6 +203,7 @@ function controlsTemplate() {
      <p>Throw Bottle: <span class="key-box">Q</span></p>
      <p>Attack: <span class="key-box">LMB</span> <span class="key-box">E</span></p>`
 }
+
 function soundsTemplate() {
     woodSignRef.innerHTML = `
      <h2>Sound</h2>
@@ -146,4 +218,14 @@ function soundsTemplate() {
          </div>`
 }
 
+function settingsTemplate() {
+    woodSignRef.innerHTML = `
+             <h2>Settings</h2>
+             <div class="quick-settings">
+             <p onclick="processSoundsClick()">Sounds</p>
+             <p onclick="processControlsClick()">Controls</p>
+             <p onclick="restartGame()">Return to Mainpage</p>
+             </div>
+             `
+}
 
