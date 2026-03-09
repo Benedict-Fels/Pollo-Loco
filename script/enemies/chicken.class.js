@@ -1,7 +1,7 @@
 
 
 class Chicken extends DrawableObject {
-    direction = 'left';
+    facingLeft = true;
     currentAnimationFrame = 0;
     chickenDistance = 0;
     health = 1;
@@ -24,8 +24,8 @@ class Chicken extends DrawableObject {
         this.world.enemies.push(this.chicken);
     }
 
-    despawnChicken(){
-        if (this.world.character.x - this.x > 2000 ) {
+    despawnChicken() {
+        if (this.world.character.x - this.x > 2000) {
             this.isGone = true;
         }
     }
@@ -47,21 +47,10 @@ class Chicken extends DrawableObject {
         this.img = this.imageCache[path];
     }
 
-    moveChicken() {
+    animateObject() {
+        this.chickenAnimation();
         if (this.isDead) return;
-        this.x -= this.speed; 
-    }
-
-    drawManual(ctx, cameraOffset) {
-        ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
-    }
-
-    drawHitbox(ctx, cameraOffset) {
-        ctx.beginPath();
-        ctx.rect(this.x + this.collisionOffset.left + cameraOffset, this.y + this.collisionOffset.top,
-            this.width - this.collisionOffset.left - this.collisionOffset.right,
-            this.height - this.collisionOffset.top - this.collisionOffset.bottom);
-        ctx.stroke();
+        this.x -= this.speed;
     }
 
     recieveDamage() {

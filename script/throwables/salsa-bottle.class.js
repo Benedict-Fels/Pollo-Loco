@@ -1,10 +1,10 @@
 
 class SalsaBottle extends ThrowableObject {
-    
+
     breakSound = bottleBreakSound;
 
-    constructor(x, y, direction) {
-        super(x, y, direction);
+    constructor(x, y, facingLeft) {
+        super(x, y, facingLeft);
         this.loadImages(salsaBottleImages.spinningImages);
         this.loadImages(salsaBottleImages.splashImages);
         this.img = this.imageCache[salsaBottleImages.spinningImages[0]];
@@ -23,21 +23,6 @@ class SalsaBottle extends ThrowableObject {
         let i = (this.currentAnimationFrame % salsaBottleImages.splashImages.length);
         if (i >= salsaBottleImages.splashImages.length - 1) {
             this.isGone = true;
-        }
-    }
-
-    drawHitbox(ctx, cameraOffset) {
-        if (!this.isSplashing) {
-            ctx.beginPath();
-            ctx.lineWidth = '2';
-            ctx.strokeStyle = 'red';
-            ctx.rect(
-                this.x + this.collisionOffset.left + cameraOffset,
-                this.y + this.collisionOffset.top,
-                this.width - this.collisionOffset.left - this.collisionOffset.right,
-                this.height - this.collisionOffset.top - this.collisionOffset.bottom
-            );
-            ctx.stroke();
         }
     }
 }

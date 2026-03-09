@@ -61,7 +61,7 @@ class levelOne {
         this.world.enemies.push(new Chicken(xPos, speed));
     }
 
-    update() {
+    spawnWaves() {
         this.checkFirstMovement();
         if (this.world.character.x > 2000 && !this.wave2) this.startWave2();
         if (this.world.character.x > 3500 && !this.wave3) this.startWave3();

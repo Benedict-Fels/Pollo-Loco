@@ -11,16 +11,16 @@ class ThrowableObject extends DrawableObject {
         bottom: 10
     };
 
-    constructor(x, y, direction) {
+    constructor(x, y, facingLeft) {
         super();
         this.x = x;
         this.y = y;
-        this.direction = direction;
+        this.facingLeft = facingLeft;
         this.height = 60;
         this.width = 50;
     }
 
-    applyPhysics() {
+    animateObject() {
         if (this.isSplashing) {
             if (this.speedX !== 0 || this.speedY !== 0) {
                 this.animationTimer = 0;
@@ -31,8 +31,11 @@ class ThrowableObject extends DrawableObject {
             this.animateSplash();
             return;
         }
-        this.x += (this.direction === 'right') ? this.speedX : -this.speedX;
-
+        if (this.facingLeft) {
+            this.x -= this.speedX;
+        } else {
+            this.x += this.speedX;
+        }
         if (this.y < this.groundLevel || this.speedY > 0) {
             this.animateRotation();
             this.y -= this.speedY;
@@ -46,19 +49,13 @@ class ThrowableObject extends DrawableObject {
         }
     }
 
-   playSound() {
-    if (this.breakSound) {
-        this.breakSound.currentTime = 0;
-        this.breakSound.play();
+    playSound() {
+        if (this.breakSound) {
+            this.breakSound.currentTime = 0;
+            this.breakSound.play();
+        }
     }
-}
 
     animateRotation() { }
     animateSplash() { }
-
-    draw(ctx, cameraOffset) {
-        if (this.img) {
-            ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
-        }
-    }
 }

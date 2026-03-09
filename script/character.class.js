@@ -2,7 +2,8 @@
 class Character extends DrawableObject {
     speed = 6;
     acceleration = 1.5;
-    direction = 'right';
+    // direction = 'right';
+    facingLeft = false;
     health = 10;
     bottleInventory = 5;
     nuggets = 0;
@@ -20,7 +21,6 @@ class Character extends DrawableObject {
         Object.keys(characterImages).forEach(stateImage => {
             this.loadImages(characterImages[stateImage]);
         });
-        this.updateAnimation();
         this.img = this.imageCache[characterImages.idleImages[0]];
     }
 
@@ -50,7 +50,7 @@ class Character extends DrawableObject {
         this.animationTimer = 0;
     }
 
-    updateAnimation() {
+    animateObject() {
         this.checkAnimation();
         if (this.isAttacking || this.isThrowing) {
             this.characterAnimation(this.imagesToUse, 2);
@@ -74,8 +74,8 @@ class Character extends DrawableObject {
     }
 
     get attackBox() {
-        let attackRange = 35;
-        let xOffset = (this.direction === 'right') ? 80 : -20;
+        let attackRange = 45;
+        let xOffset = this.facingLeft ? -20 : 80;
         return {
             x: this.x + xOffset,
             y: this.y + 100,
@@ -86,9 +86,9 @@ class Character extends DrawableObject {
 
     spawnBottle() {
         let bottle = new SalsaBottle(
-            this.x + (this.direction === 'right' ? 50 : 0),
+            this.x + (this.facingLeft ? 0 : 50),
             this.y + 50,
-            this.direction,
+            this.facingLeft,
         );
         throwSound.play();
         this.world.throwableObjects.push(bottle);
@@ -160,7 +160,7 @@ class Character extends DrawableObject {
             this.setState('isWalking');
         }
         this.movingDirection = -1;
-        this.direction = 'left';
+        this.facingLeft = true;
         this.x -= this.speed;
         this.collisionOffset = { top: 100, left: 30, right: 20, bottom: 10 };
     }
@@ -172,7 +172,7 @@ class Character extends DrawableObject {
             this.setState('isWalking');
         }
         this.movingDirection = 1;
-        this.direction = 'right';
+        this.facingLeft = false;
         this.x += this.speed;
         this.collisionOffset = { top: 100, left: 20, right: 30, bottom: 10 };
     }
@@ -185,17 +185,5 @@ class Character extends DrawableObject {
             this.animationTimer = 0;
         }
         this.isIdling = true;
-    }
-
-    drawManual(ctx, cameraOffset) {
-        if (this.direction === 'left') {
-            ctx.save();
-            ctx.translate(this.x + cameraOffset + this.width / 2, this.y);
-            ctx.scale(-1, 1);
-            ctx.drawImage(this.img, -this.width / 2, 0, this.width, this.height);
-            ctx.restore();
-        } else {
-            ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
-        }
     }
 }

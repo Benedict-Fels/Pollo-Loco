@@ -67,6 +67,15 @@ class DrawableObject {
         return this.y < 264;
     }
 
+    drawAttackBox(ctx) {
+        if (this.hasAttacked) {
+            let box = this.attackBox;
+            ctx.strokeStyle = 'red';
+            ctx.strokeRect(box.x + this.cameraOffset, box.y, box.width, box.height);
+        }
+
+    }
+
     checkEndAnimation() {
         if ((this.currentAnimationFrame % this.imagesToUse.length) >= (this.imagesToUse.length - 1)) return true
         else return false
@@ -83,20 +92,18 @@ class DrawableObject {
             this.y + this.collisionOffset.top < enemy.y + enemy.height - enemy.collisionOffset.bottom;
     }
 
-    // drawHitbox(ctx, cameraOffset = 0) {
-    //     if (this instanceof Character || this instanceof Chicken || this instanceof ThrowableObject) {
-    //         ctx.beginPath();
-    //         ctx.lineWidth = '2';
-    //         ctx.strokeStyle = 'red';
-    //         ctx.rect(
-    //             this.x + this.collisionOffset.left + cameraOffset,
-    //             this.y + this.collisionOffset.top,
-    //             this.width - this.collisionOffset.left - this.collisionOffset.right,
-    //             this.height - this.collisionOffset.top - this.collisionOffset.bottom
-    //         );
-    //         ctx.stroke();
-    //     }
-    // }
+    drawManual(ctx, cameraOffset) {
+        if (!this.facingLeft) {
+            ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
+        } else {
+            ctx.save();
+            ctx.translate(this.x + cameraOffset + this.width, this.y);
+            ctx.scale(-1, 1);
+            ctx.drawImage(this.img, 0, 0, this.width, this.height);
+            ctx.restore();
+        }
+    }
+
     drawHitbox(ctx, cameraOffset = 0) {
         if (debugMode) {
             ctx.beginPath();
@@ -109,6 +116,14 @@ class DrawableObject {
                 this.height - this.collisionOffset.top - this.collisionOffset.bottom
             );
             ctx.stroke();
+        }
+    }
+
+    drawAttackBox(ctx, cameraOffset) {
+        if (this.hasAttacked) {
+            let box = this.attackBox;
+            ctx.strokeStyle = 'blue';
+            ctx.strokeRect(box.x + cameraOffset, box.y, box.width, box.height);
         }
     }
 }

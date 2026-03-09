@@ -17,7 +17,7 @@ class Clouds extends DrawableObject {
         }
     }
 
-    draw(ctx) {
+    drawManual(ctx) {
         ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
         ctx.drawImage(this.img, this.x + this.width, this.y, this.width, this.height);
     }

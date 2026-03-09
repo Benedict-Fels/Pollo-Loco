@@ -2,7 +2,6 @@
 class World {
     lastFrameTime = 0;
     fpsInterval = 1000 / 60;
-    debugMode = false;
 
     canvas;
     ctx;
@@ -16,6 +15,7 @@ class World {
         { name: '2_second_layer', parallax: 0.5 },
         { name: '1_first_layer', parallax: 1.0 }
     ];
+
     throwableObjects = [];
     collectableBottles = [];
     collectableNuggets = [];
@@ -55,6 +55,7 @@ class World {
         this.level = new levelOne(this);
     }
 
+
     spawnBottles() {
         for (let i = 0; i < 5; i++) {
             let xBottlePos = 400 + Math.random() * 400 + i * 1200;
@@ -76,43 +77,59 @@ class World {
         }
     }
 
+    gameLoop(time) {
+        if (this.gameStopped) return;
+        this.limitFrames(time);
+        if (!settingsWoodSign && !controlsWoodSign && !soundsWoodSign) {
+            this.update();
+            this.draw();
+        }
+        this.animationFrameId = requestAnimationFrame((t) => this.gameLoop(t));
+    }
+
     update() {
         this.getKeyboardInput();
-        this.character.updateAnimation();
-        this.enemies.forEach(enemy => {
-            enemy.chickenAnimation();
-            enemy.moveChicken();
-        });
-        this.throwableObjects.forEach(obj => {
-            obj.applyPhysics();
-        });
-        this.clouds.moveClouds();
+        this.moveMovableObjects();
         this.cameraOffset = 150 - this.character.x;
-        this.level.update();
         this.checkThrowObjects();
         this.checkCollisions();
-        // this.checkBottleCollection();
-        // this.checkGoldCollection();
         this.checkCollection(this.collectableBottles, () => this.character.bottleInventory++);
         this.checkCollection(this.collectableNuggets, () => this.character.nuggets++);
-        this.healthBar.count = this.character.health;
-        this.bottleBar.count = this.character.bottleInventory;
-        this.goldBar.count = this.character.nuggets;
+        this.updateStatusBars();
+        this.level.spawnWaves();
         this.cleanUpObjects();
     }
 
     getKeyboardInput() {
-        if (this.keyboard.right) {
-            this.character.moveRight();
-        } else if (this.keyboard.left) {
-            this.character.moveLeft();
-        } else {
-            this.character.stopWalking();
-        }
+        if (this.keyboard.right) this.character.moveRight();
+        else if (this.keyboard.left) this.character.moveLeft();
+        else this.character.stopWalking();
         if (this.keyboard.up) this.character.jump();
         if (this.keyboard.attack) this.character.attack();
         if (this.keyboard.throw) this.character.throwBottle();
     }
+
+    get allMovableObjects() {
+        return [
+            this.character,
+            ...this.enemies,
+            ...this.throwableObjects
+        ];
+    }
+
+    moveMovableObjects() {
+        this.allMovableObjects.forEach(obj => {
+            obj.animateObject()
+        });
+        this.clouds.moveClouds();
+    }
+
+    updateStatusBars() {
+        this.healthBar.count = this.character.health;
+        this.bottleBar.count = this.character.bottleInventory;
+        this.goldBar.count = this.character.nuggets;
+    }
+
 
     checkThrowObjects() {
         if (this.keyboard.throw && !this.character.isThrowing && !this.character.isJumping) {
@@ -205,56 +222,46 @@ class World {
 
     draw() {
         this.ctx.clearRect(0, 0, this.WIDTH, this.HEIGHT);
-        this.clouds.draw(this.ctx);
-        this.backgrounds.forEach(bg => {
-            bg.draw(this.ctx, this.cameraOffset);
+        this.drawBackgroundObjects();
+        this.drawMovableObjects();
+        this.drawStatusBars();
+    }
+
+    get allBackgroundObjects() {
+        return [
+            ...this.backgrounds,
+            ...this.backgroundRocks,
+            this.clouds,
+            ...this.collectableNuggets,
+            ...this.collectableBottles
+        ];
+    }
+
+    drawBackgroundObjects() {
+        this.allBackgroundObjects.forEach(bg => {
+            bg.drawManual(this.ctx, this.cameraOffset);
         });
-        this.backgroundRocks.forEach(backgroundRock => {
-            backgroundRock.drawManual(this.ctx, this.cameraOffset);
+    }
+
+    drawMovableObjects() {
+        this.allMovableObjects.forEach(obj => {
+            obj.drawManual(this.ctx, this.cameraOffset);
+            if (debugMode) {
+                obj.drawHitbox(this.ctx, this.cameraOffset);
+                obj.drawAttackBox(this.ctx, this.cameraOffset);
+            }
         });
-        this.collectableNuggets.forEach(nugget => {
-            nugget.drawManual(this.ctx, this.cameraOffset);
-        });
-        this.character.drawManual(this.ctx, this.cameraOffset);
-        this.character.drawHitbox(this.ctx, this.cameraOffset);
+    }
+
+    drawStatusBars() {
         this.healthBar.draw(this.ctx);
         this.bottleBar.draw(this.ctx);
         this.goldBar.draw(this.ctx);
-        this.enemies.forEach(enemy => {
-            enemy.drawManual(this.ctx, this.cameraOffset);
-            enemy.drawHitbox(this.ctx, this.cameraOffset);
-            if (enemy instanceof BossChicken && enemy.hasAttacked) {
-                let box = enemy.attackBox;
-                this.ctx.strokeStyle = 'red';
-                this.ctx.strokeRect(box.x + this.cameraOffset, box.y, box.width, box.height);
-            }
-        });
-        this.collectableBottles.forEach(bottle => {
-            bottle.drawManual(this.ctx, this.cameraOffset);
-        });
-        this.throwableObjects.forEach(obj => {
-            obj.draw(this.ctx, this.cameraOffset);
-            obj.drawHitbox(this.ctx, this.cameraOffset);
-        });
-        if (this.character.hasAttacked) {
-            let box = this.character.attackBox;
-            this.ctx.strokeStyle = 'red';
-            this.ctx.strokeRect(box.x + this.cameraOffset, box.y, box.width, box.height);
-        }
         if (this.level.bossWave) {
             this.level.bossHealthBar.draw(this.ctx, this.level.boss.health, 20);
         }
     }
 
-    gameLoop(time) {
-        if (this.gameStopped) return;
-        this.limitFrames(time);
-        if (!settingsWoodSign && !controlsWoodSign && !soundsWoodSign) {
-            this.update();
-            this.draw();
-        }
-        this.animationFrameId = requestAnimationFrame((t) => this.gameLoop(t));
-    }
 
     stopGame() {
         this.gameStopped = true;
@@ -263,8 +270,6 @@ class World {
             this.animationFrameId = null;
         }
     }
-
-
 
     limitFrames(currentTime) {
         // if (!this.lastFrameTime) this.lastFrameTime = currentTime;

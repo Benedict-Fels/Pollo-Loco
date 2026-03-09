@@ -20,7 +20,10 @@ class KeyboardInput {
         if (e.key === 'ArrowUp' || e.key === 'w' || e.key === ' ') this.up = true;
         if (e.key === 'q') this.throw = true;
         if (e.key === 'e') this.attack = true;
-        if (e.key === 'b') debugMode = !debugMode; console.log("Debug Mode is: " + debugMode);
+        if (e.key === 'b') {
+            debugMode = !debugMode;
+            console.log("Debug Mode is: " + debugMode);
+        }
     }
 
     handleKeyUp(e) {

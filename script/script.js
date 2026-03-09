@@ -15,6 +15,7 @@ let soundsWoodSign = false;
 let settingsWoodSign = false;
 let world;
 let keyboard;
+let debugMode = false;
 let volSettings = { general: 0.5, effects: 0.5, music: 0.5, soundMuted: false };
 let volSettingsCopy = {};
 

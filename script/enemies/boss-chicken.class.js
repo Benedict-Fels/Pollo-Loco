@@ -31,9 +31,8 @@ class BossChicken extends DrawableObject {
     }
 
     checkAnimation() {
-        if (this.x > this.world.character.x) {
-            this.facingLeft = true;
-        } else this.facingLeft = false;
+        if (this.x > this.world.character.x) this.facingLeft = true;
+        else this.facingLeft = false;
         if (this.isDead) this.imagesToUse = bossChickenImages.deadImages;
         else if (this.isHurt) this.imagesToUse = bossChickenImages.hurtImages;
         else if (this.isStomping) this.imagesToUse = bossChickenImages.stompImages;
@@ -61,7 +60,7 @@ class BossChicken extends DrawableObject {
         if (this.attackIndex == 6) { this.isCallingChicken = true, this.speed = 0; return }
     }
 
-    chickenAnimation() {
+    animateObject() {
         if (this.isHurt) {
             this.hurtAnimation();
         } else {
@@ -170,23 +169,4 @@ class BossChicken extends DrawableObject {
         }
     }
 
-    drawManual(ctx, cameraOffset) {
-        if (this.facingLeft) {
-            ctx.drawImage(this.img, this.x + cameraOffset, this.y, this.width, this.height);
-        } else {
-            ctx.save();
-            ctx.translate(this.x + cameraOffset + this.width, this.y);
-            ctx.scale(-1, 1);
-            ctx.drawImage(this.img, 0, 0, this.width, this.height);
-            ctx.restore();
-        }
-    }
-
-    drawHitbox(ctx, cameraOffset) {
-        ctx.beginPath();
-        ctx.rect(this.x + this.collisionOffset.left + cameraOffset, this.y + this.collisionOffset.top,
-            this.width - this.collisionOffset.left - this.collisionOffset.right,
-            this.height - this.collisionOffset.top - this.collisionOffset.bottom);
-        ctx.stroke();
-    }
 }
