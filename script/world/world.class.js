@@ -262,7 +262,6 @@ class World {
         }
     }
 
-
     stopGame() {
         this.gameStopped = true;
         if (this.animationFrameId) {
@@ -272,20 +271,9 @@ class World {
     }
 
     limitFrames(currentTime) {
-        // if (!this.lastFrameTime) this.lastFrameTime = currentTime;
         const elapsed = currentTime - this.lastFrameTime;
         if (elapsed >= this.fpsInterval) {
             this.lastFrameTime = currentTime - (elapsed % this.fpsInterval);
         }
     }
-
-    //     limitFrames(currentTime) {
-    //     const elapsed = currentTime - this.lastFrameTime;
-    //     if (elapsed >= this.fpsInterval) {
-    //         this.lastFrameTime = currentTime - (elapsed % this.fpsInterval);
-    //         return true; 
-    //     }
-    //     return false;
-    // }
-
 }
