@@ -21,42 +21,37 @@ class ThrowableObject extends DrawableObject {
     }
 
     applyPhysics() {
-        let physicsInterval = setInterval(() => {
-            if (this.isSplashing) {
-                if (this.speedX !== 0 || this.speedY !== 0) {
-                    this.animationTimer = 0;
-                    this.speedX = 0;
-                    this.speedY = 0;
-                    this.playSound();
-                }
-                this.animateSplash();
-                if (this.isGone) clearInterval(physicsInterval);
-                return;
-            }
-            this.x += (this.direction === 'right') ? this.speedX : -this.speedX;
-
-            if (this.y < this.groundLevel || this.speedY > 0) {
-                this.animateRotation();
-                this.y -= this.speedY;
-                this.speedY -= this.acceleration;
-            } else {
-                this.isSplashing = true;
-                this.playSound();
+        if (this.isSplashing) {
+            if (this.speedX !== 0 || this.speedY !== 0) {
                 this.animationTimer = 0;
-                this.speedY = 0;
                 this.speedX = 0;
+                this.speedY = 0;
+                this.playSound();
             }
-        }, 1000 / 60);
+            this.animateSplash();
+            return;
+        }
+        this.x += (this.direction === 'right') ? this.speedX : -this.speedX;
+
+        if (this.y < this.groundLevel || this.speedY > 0) {
+            this.animateRotation();
+            this.y -= this.speedY;
+            this.speedY -= this.acceleration;
+        } else {
+            this.isSplashing = true;
+            this.playSound();
+            this.animationTimer = 0;
+            this.speedY = 0;
+            this.speedX = 0;
+        }
     }
 
-    playSound() {
-        if (this instanceof SalsaBottle) {
-            bottleBreakSound.play();
-        }
-        if (this instanceof BossEgg) {
-            eggCrackSound.play();
-        }
+   playSound() {
+    if (this.breakSound) {
+        this.breakSound.currentTime = 0;
+        this.breakSound.play();
     }
+}
 
     animateRotation() { }
     animateSplash() { }

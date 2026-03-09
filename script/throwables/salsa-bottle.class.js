@@ -1,5 +1,7 @@
 
 class SalsaBottle extends ThrowableObject {
+    
+    breakSound = bottleBreakSound;
 
     constructor(x, y, direction) {
         super(x, y, direction);
@@ -10,7 +12,6 @@ class SalsaBottle extends ThrowableObject {
             this.x = x;
         }
         this.collisionOffset = { top: 10, left: 10, right: 10, bottom: 10 };
-        this.applyPhysics();
     }
 
     animateRotation() {

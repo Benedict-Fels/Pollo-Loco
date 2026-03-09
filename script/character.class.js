@@ -1,7 +1,7 @@
 
 class Character extends DrawableObject {
     speed = 6;
-    acceleration = 4;
+    acceleration = 1.5;
     direction = 'right';
     health = 10;
     bottleInventory = 5;
@@ -21,30 +21,12 @@ class Character extends DrawableObject {
             this.loadImages(characterImages[stateImage]);
         });
         this.updateAnimation();
-        this.applyGravity();
         this.img = this.imageCache[characterImages.idleImages[0]];
-    }
-
-    applyGravity() {
-        setInterval(() => {
-            if (this.isAboveGround() || this.speedY > 0) {
-                this.y -= this.speedY;
-                this.speedY -= this.acceleration;
-            } else {
-                this.y = 264;
-                this.speedY = 0;
-                this.isJumping = false;
-            }
-        }, 1000 / 22);
-    }
-
-    isAboveGround() {
-        return this.y < 264;
     }
 
     jump() {
         if (!this.isJumping) {
-            this.speedY = 30;
+            this.speedY = 22;
             this.setState('isJumping');
             characterJumpSound.play();
         }
@@ -126,7 +108,7 @@ class Character extends DrawableObject {
         setTimeout(() => {
             this.isHurt = false;
             this.invincibility = false;
-        }, 500);
+        }, 1000);
     }
 
     characterAnimation(imagesToUse, timer = 6) {
@@ -153,8 +135,14 @@ class Character extends DrawableObject {
 
     checkAnimation() {
         if (this.isDead) this.imagesToUse = characterImages.deadImages;
-        else if (this.isHurt) this.imagesToUse = characterImages.hurtImages;
-        else if (this.isJumping) this.imagesToUse = characterImages.jumpImages;
+        else if (this.isHurt) {
+            this.imagesToUse = characterImages.hurtImages;
+            this.applyGravity();
+        }
+        else if (this.isJumping) {
+            this.imagesToUse = characterImages.jumpImages;
+            this.applyGravity();
+        }
         else if (this.isThrowing) this.imagesToUse = characterImages.throwImages;
         else if (this.isAttacking) this.imagesToUse = characterImages.attackImages;
         else if (this.isWalking) this.imagesToUse = characterImages.walkImages;

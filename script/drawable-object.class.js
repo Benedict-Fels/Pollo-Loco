@@ -52,6 +52,21 @@ class DrawableObject {
         this.setCurrentImage(imagesToUse);
     }
 
+    applyGravity() {
+        if (this.isAboveGround() || this.speedY > 0) {
+            this.y -= this.speedY;
+            this.speedY -= this.acceleration;
+        } else {
+            this.y = 264;
+            this.speedY = 0;
+            this.isJumping = false;
+        }
+    }
+
+    isAboveGround() {
+        return this.y < 264;
+    }
+
     checkEndAnimation() {
         if ((this.currentAnimationFrame % this.imagesToUse.length) >= (this.imagesToUse.length - 1)) return true
         else return false
@@ -68,8 +83,22 @@ class DrawableObject {
             this.y + this.collisionOffset.top < enemy.y + enemy.height - enemy.collisionOffset.bottom;
     }
 
+    // drawHitbox(ctx, cameraOffset = 0) {
+    //     if (this instanceof Character || this instanceof Chicken || this instanceof ThrowableObject) {
+    //         ctx.beginPath();
+    //         ctx.lineWidth = '2';
+    //         ctx.strokeStyle = 'red';
+    //         ctx.rect(
+    //             this.x + this.collisionOffset.left + cameraOffset,
+    //             this.y + this.collisionOffset.top,
+    //             this.width - this.collisionOffset.left - this.collisionOffset.right,
+    //             this.height - this.collisionOffset.top - this.collisionOffset.bottom
+    //         );
+    //         ctx.stroke();
+    //     }
+    // }
     drawHitbox(ctx, cameraOffset = 0) {
-        if (this instanceof Character || this instanceof Chicken || this instanceof ThrowableObject) {
+        if (debugMode) {
             ctx.beginPath();
             ctx.lineWidth = '2';
             ctx.strokeStyle = 'red';

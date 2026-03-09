@@ -2,6 +2,7 @@
 class World {
     lastFrameTime = 0;
     fpsInterval = 1000 / 60;
+    debugMode = false;
 
     canvas;
     ctx;
@@ -76,22 +77,24 @@ class World {
     }
 
     update() {
-        // console.log('animationTimer', this.character.animationTimer);
-        // console.log('currentAnimationFrame',this.character.currentAnimationFrame);
-        
         this.getKeyboardInput();
         this.character.updateAnimation();
         this.enemies.forEach(enemy => {
             enemy.chickenAnimation();
             enemy.moveChicken();
         });
+        this.throwableObjects.forEach(obj => {
+            obj.applyPhysics();
+        });
         this.clouds.moveClouds();
         this.cameraOffset = 150 - this.character.x;
         this.level.update();
         this.checkThrowObjects();
         this.checkCollisions();
-        this.checkBottleCollection();
-        this.checkGoldCollection();
+        // this.checkBottleCollection();
+        // this.checkGoldCollection();
+        this.checkCollection(this.collectableBottles, () => this.character.bottleInventory++);
+        this.checkCollection(this.collectableNuggets, () => this.character.nuggets++);
         this.healthBar.count = this.character.health;
         this.bottleBar.count = this.character.bottleInventory;
         this.goldBar.count = this.character.nuggets;
@@ -146,7 +149,6 @@ class World {
                 if (obj instanceof BossEgg) {
                     if (obj.isColliding(this.character) && !obj.isSplashing) {
                         this.character.recieveDamage();
-                        eggCrackSound.play();
                         obj.isSplashing = true;
                     }
                 }
@@ -182,24 +184,13 @@ class World {
         }
     }
 
-    checkBottleCollection() {
-        this.collectableBottles.forEach((bottle, index) => {
-            if (this.character.isColliding(bottle)) {
+    checkCollection(items, putToInventory) {
+        items.forEach((item, index) => {
+            if (this.character.isColliding(item)) {
                 collectSound.currentTime = 0;
                 collectSound.play();
-                this.character.bottleInventory += 1;
-                this.collectableBottles.splice(index, 1);
-            }
-        });
-    }
-
-    checkGoldCollection() {
-        this.collectableNuggets.forEach((nugget, index) => {
-            if (this.character.isColliding(nugget)) {
-                collectSound.currentTime = 0;
-                collectSound.play();
-                this.character.nuggets += 1;
-                this.collectableNuggets.splice(index, 1);
+                putToInventory();
+                items.splice(index, 1);
             }
         });
     }
