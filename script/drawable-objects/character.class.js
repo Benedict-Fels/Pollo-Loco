@@ -35,7 +35,6 @@ class Character extends DrawableObject {
     attack() {
         if (!this.isAttacking && !this.isJumping && !this.isWalking) {
             this.setState('isAttacking');
-            characterWarcrySound.play();
         }
     }
 
@@ -127,6 +126,7 @@ class Character extends DrawableObject {
 
     checkHasAttacked() {
         if (this.isAttacking && this.currentAnimationFrame == 8) {
+            characterAttackSound.play();
             this.hasAttacked = true
         }
         else

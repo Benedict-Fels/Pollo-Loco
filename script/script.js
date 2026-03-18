@@ -16,16 +16,7 @@ let settingsWoodSign = false;
 let world;
 let keyboard;
 let debugMode = false;
-let volSettings = { general: 0.5, effects: 0.5, music: 0.5, soundMuted: false };
-let volSettingsCopy = {};
-
-function loadVolSettings() {
-    let savedData = localStorage.getItem('gameSoundSettings');
-    if (savedData) {
-        volSettings = JSON.parse(savedData);
-        updateVolume();
-    }
-}
+let touchControl = false;
 
 function toggleFullscreen() {
     let container = document.querySelector('.game-container');
@@ -52,133 +43,6 @@ function resetClick(icon) {
     iconRefs[icon].classList.remove('inverted-color');
 }
 
-function openSettings() {
-    if (controlsWoodSign || soundsWoodSign) {
-        woodSignRef.classList.remove('visible');
-        setTimeout(() => {
-            openSettingsSign();
-            controlsWoodSign = false;
-            soundsWoodSign = false;
-        }, 300);
-    } else {
-        openSettingsSign();
-    }
-}
-
-function openSettingsSign() {
-    settingsTemplate();
-    woodSignRef.classList.toggle('visible');
-    settingsWoodSign = !settingsWoodSign;
-}
-
-function processSoundClick() {
-    if (volSettings.soundMuted) {
-        unmuteSound();
-    } else {
-        muteSound();
-    }
-    updateSoundIcon();
-}
-
-function updateSoundIcon() {
-    if (volSettings.soundMuted) iconRefs.sound.src = './img/12_icons/muted.png';
-    else iconRefs.sound.src = './img/12_icons/volume.png';
-}
-
-function muteSound() {
-    volSettingsCopy = {
-        general: volSettings.general,
-        music: volSettings.music,
-        effects: volSettings.effects
-    };
-    volSettings.general = 0;
-    volSettings.soundMuted = true;
-    updateVolume();
-}
-
-function unmuteSound() {
-    if (volSettingsCopy.general !== undefined) {
-        volSettings.general = volSettingsCopy.general;
-        volSettings.music = volSettingsCopy.music;
-        volSettings.effects = volSettingsCopy.effects;
-    } else {
-        volSettings.general = 0.5;
-    }
-    volSettings.soundMuted = false;
-    updateVolume();
-}
-
-function processControlsClick() {
-    if (soundsWoodSign || settingsWoodSign) {
-        woodSignRef.classList.remove('visible');
-        setTimeout(() => {
-            openControlsSign();
-            soundsWoodSign = false;
-            settingsWoodSign = false;
-        }, 300);
-    } else {
-        openControlsSign();
-    }
-}
-
-function openControlsSign() {
-    controlsTemplate();
-    woodSignRef.classList.toggle('visible');
-    controlsWoodSign = !controlsWoodSign;
-}
-
-function processSoundsClick() {
-    if (controlsWoodSign || settingsWoodSign) {
-        woodSignRef.classList.remove('visible');
-        setTimeout(() => {
-            openSoundsSign();
-            controlsWoodSign = false;
-            settingsWoodSign = false;
-        }, 300);
-    } else {
-        openSoundsSign();
-    }
-}
-
-function openSoundsSign() {
-    soundsTemplate();
-    requestAnimationFrame(() => {
-        document.getElementById('generalInputID').addEventListener('input', getVolume);
-        document.getElementById('musicInputID').addEventListener('input', getVolume);
-        document.getElementById('soundInputID').addEventListener('input', getVolume);
-    })
-    woodSignRef.classList.toggle('visible');
-    soundsWoodSign = !soundsWoodSign;
-}
-
-function getVolume() {
-    volSettings.general = document.getElementById('generalInputID').value / 100;
-    volSettings.music = document.getElementById('musicInputID').value / 100;
-    volSettings.effects = document.getElementById('soundInputID').value / 100;
-    updateVolume();
-}
-
-function updateVolume() {
-    let generalFactor = 0.3;
-    let gen = volSettings.general || 0;
-    let mus = volSettings.music || 0;
-    let eff = volSettings.effects || 0;
-    if (music) {
-        music.volume = mus * gen * generalFactor;
-    }
-    Object.keys(soundFiles).forEach(soundName => {
-        let audioObject = window[soundName];
-        if (audioObject) {
-            audioObject.volume = eff * gen * generalFactor;
-        }
-    });
-    saveSoundSettings();
-}
-
-function saveSoundSettings() {
-    localStorage.setItem('gameSoundSettings', JSON.stringify(volSettings));
-}
-
 function startGame() {
     woodSignRef.classList.remove('visible');
     controlsWoodSign = false;
@@ -189,10 +53,12 @@ function startGame() {
     canvas.classList.remove('dis-none');
     keyboard = new KeyboardInput();
     if (isMobileDevice()) {
+        setupMobileControls();
+        addMobileEvents();
         mobileControlsRef.classList.remove('dis-none');
         iconRefs.touch.classList.remove('dis-none');
     }
-    music.play();
+    startMusic();
     loadVolSettings();
     world = new World(canvas, keyboard);
     world.gameLoop();
@@ -204,13 +70,13 @@ function setOutroDiv(outcome) {
     if (outcome === 'won') outroImageRef.src = './img/9_intro_outro_screens/you_win.png';
     setTimeout(() => {
         showReturnSign();
-    }, 1000);
+    }, 800);
 }
 
 function showReturnSign() {
     woodSignRef.style.backgroundImage = 'url(./img/9_intro_outro_screens/start/wooden_sign_top_small2.png)';
     woodSignRef.style.paddingTop = '9%'
-    woodSignRef.innerHTML = `<h3 class="restart-button" onclick="restartGame()">Return</h3>`
+    woodSignRef.innerHTML = `<div class="dis-flex"><h3 class="restart-button" onclick="restartGame()">Return</h3><h3 class="restart-button" onclick="restartGame()">Return</h3>`
     woodSignRef.classList.add('visible');
 
 }
@@ -270,42 +136,16 @@ function setupMobileControls() {
                 <p id="btnJump" class="key-box">↑</p>
             </div>
         `;
-        // bindMobileEvents();
+        touchControl = true;
     }
 }
 
-function controlsTemplate() {
-    woodSignRef.innerHTML = `
-     <h2>Controls</h2>
-     <div><p>Left: <span class="key-box"> A</span>  <span class="key-box bold"> ←</span></p>
-     <p>Right: <span class="key-box"> D</span>  <span class="key-box bold"> →</span></p>
-     <p>Jump: <span class="key-box"> Space</span> <span class="key-box"> W</span> <span class="key-box bold"> ↑</span></p>
-     <p>Throw Bottle: <span class="key-box">Q</span></p>
-     <p>Attack: <span class="key-box">LMB</span> <span class="key-box">E</span></p>`
+function toggleTouchControl() {
+    mobileControlsRef.classList.toggle('dis-none');
+    touchControl = !touchControl;
+    if (touchControl) {
+        iconRefs.touch.src = "./img/12_icons/tap.png";
+    } else {
+        iconRefs.touch.src = "./img/12_icons/no_tap.png";
+    }
 }
-
-function soundsTemplate() {
-    woodSignRef.innerHTML = `
-     <h2>Sound</h2>
-         <div class="sound-controller">
-             <span>General</span><input id="generalInputID" type="range" min="0" max="100" value="${volSettings.general * 100}">
-         </div>
-         <div class="sound-controller">
-             <span>Music</span><input id="musicInputID" type="range" min="0" max="100" value="${volSettings.music * 100}">
-         </div>
-         <div class="sound-controller">
-             <span>Effects</span><input id="soundInputID" type="range" min="0" max="100" value="${volSettings.effects * 100}">
-         </div>`
-}
-
-function settingsTemplate() {
-    woodSignRef.innerHTML = `
-             <h2>Settings</h2>
-             <div class="quick-settings">
-             <p onclick="processSoundsClick()">Sounds</p>
-             <p onclick="processControlsClick()">Controls</p>
-             <p onclick="restartGame()">Return to Mainpage</p>
-             </div>
-             `
-}
-
