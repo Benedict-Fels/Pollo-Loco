@@ -39,7 +39,6 @@ function openControlsSign() {
     controlsTemplate();
     woodSignRef.classList.toggle('visible');
     controlsWoodSign = !controlsWoodSign;
-    startMusic();
 }
 
 function processSoundsClick() {
