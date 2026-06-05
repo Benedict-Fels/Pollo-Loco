@@ -1,0 +1,12 @@
+{
+    "source": {
+        "include": [
+            "./script/drawable-objects/background/background-rocks.class.js",
+            "./script/drawable-objects/background/clouds.class.js",
+            "./script/icon-bar.class.js"
+        ]
+    },
+    "opts": {
+        "destination": "./out"
+    }
+}
