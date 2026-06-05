@@ -32,6 +32,8 @@ class World {
 
     constructor(canvas, keyboard) {
         this.animationFrameId = null;
+        this.lastFrameTime = 0;
+        this.fpsInterval = 1000 / 60;
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.keyboard = keyboard;
@@ -53,6 +55,8 @@ class World {
         this.spawnBottles();
         this.spawnRocks();
         this.level = new levelOne(this);
+        this.lastFrameTime = 0;
+        this.animationFrameId = requestAnimationFrame((t) => this.gameLoop(t));
     }
 
 
@@ -79,10 +83,17 @@ class World {
 
     gameLoop(time) {
         if (this.gameStopped) return;
-        this.limitFrames(time);
-        if (!settingsWoodSign && !controlsWoodSign && !soundsWoodSign) {
-            this.update();
-            this.draw();
+        if (!this.lastFrameTime) {
+            this.lastFrameTime = time;
+        }
+        let elapsed = time - this.lastFrameTime;
+        if (elapsed >= this.fpsInterval) {
+            this.lastFrameTime = time - (elapsed % this.fpsInterval);
+            this.limitFrames(time);
+            if (!settingsWoodSign && !controlsWoodSign && !soundsWoodSign) {
+                this.update();
+                this.draw();
+            }
         }
         this.animationFrameId = requestAnimationFrame((t) => this.gameLoop(t));
     }
