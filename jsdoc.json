@@ -1,12 +1,21 @@
 {
+    "plugins": [],
     "source": {
-        "include": [
-            "./script/drawable-objects/background/background-rocks.class.js",
-            "./script/drawable-objects/background/clouds.class.js",
-            "./script/icon-bar.class.js"
-        ]
+        "include": ["script"],
+        "includePattern": ".+\\.js(doc|x)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "sourceType": "module",
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc", "closure"]
     },
     "opts": {
-        "destination": "./out"
+        "destination": "./out",
+        "recurse": true
+    },
+    "templates": {
+        "cleansed": true,
+        "chroma": "autumn"
     }
 }

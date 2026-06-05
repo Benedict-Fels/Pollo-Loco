@@ -141,7 +141,9 @@ class BossChicken extends DrawableObject {
             this.hurtAnimation();
         } else {
             this.mainAnimation();
+            this.moveChicken()
         }
+
     }
 
     /**
