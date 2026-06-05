@@ -129,7 +129,7 @@ function settingsTemplate() {
              <div class="quick-settings">
              <p onclick="processSoundsClick()">Sounds</p>
              <p onclick="processControlsClick()">Controls</p>
-             <p onclick="restartGame()">Return to Mainpage</p>
+             <p onclick="returnToMainpage()">Return to Mainpage</p>
              </div>
              `
 }

@@ -84,7 +84,6 @@ function showReturnSign() {
 }
 
 function returnToMainpage() {
-    console.log('returning to main page');
     startDivRef.classList.remove('dis-none');
     outroDivRef.classList.add('dis-none');
     canvas.classList.add('dis-none');

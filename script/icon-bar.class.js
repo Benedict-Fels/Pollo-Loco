@@ -1,3 +1,6 @@
+/**
+ * Class for the icon bars that show the amount of collected items, like coins or hearts.
+ */
 
 class IconBar {
     x;
@@ -6,6 +9,11 @@ class IconBar {
     count = 0;
     iconSize = 40;
 
+    /**
+     * @param {number} x 
+     * @param {number} y 
+     * @param {string} imagePath 
+     */
     constructor(x, y, imagePath) {
         this.x = x;
         this.y = y;

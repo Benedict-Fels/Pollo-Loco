@@ -75,6 +75,10 @@ function getVolume() {
     volSettings.general = document.getElementById('generalInputID').value / 100;
     volSettings.music = document.getElementById('musicInputID').value / 100;
     volSettings.effects = document.getElementById('soundInputID').value / 100;
+    if (volSettings.general > 0){
+        volSettings.soundMuted = false;
+        updateSoundIcon();
+    }
     updateVolume();
 }
 
