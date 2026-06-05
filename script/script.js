@@ -12,6 +12,7 @@ const iconRefs = {
 let settingsOpen = false;
 let controlsWoodSign = false;
 let soundsWoodSign = false;
+let imprintWoodSign = false;
 let settingsWoodSign = false;
 let world;
 let keyboard;
@@ -48,6 +49,7 @@ function startGame() {
     controlsWoodSign = false;
     settingsWoodSign = false;
     soundsWoodSign = false;
+    imprintWoodSign = false;
     iconRefs.settings.classList.remove('dis-none');
     startDivRef.classList.add('dis-none');
     canvas.classList.remove('dis-none');
@@ -76,19 +78,23 @@ function setOutroDiv(outcome) {
 function showReturnSign() {
     woodSignRef.style.backgroundImage = 'url(./img/9_intro_outro_screens/start/wooden_sign_top_small2.png)';
     woodSignRef.style.paddingTop = '9%'
-    woodSignRef.innerHTML = `<div class="dis-flex"><h3 class="restart-button" onclick="restartGame()">Return</h3><h3 class="restart-button" onclick="restartGame()">Return</h3>`
+    woodSignRef.innerHTML = `<div class="dis-flex"><h3 class="restart-button" onclick="returnToMainpage()">Return</h3></div>`;
     woodSignRef.classList.add('visible');
 
 }
 
-function restartGame() {
-    console.log('restart Game');
+function returnToMainpage() {
+    console.log('returning to main page');
     startDivRef.classList.remove('dis-none');
     outroDivRef.classList.add('dis-none');
     canvas.classList.add('dis-none');
     woodSignRef.style.backgroundImage = 'url(./img/9_intro_outro_screens/start/wooden_sign_top2.png)';
     woodSignRef.style.paddingTop = '16%'
     woodSignRef.classList.remove('visible');
+    if (isMobileDevice()) {
+        mobileControlsRef.classList.add('dis-none');
+        iconRefs.touch.classList.add('dis-none');
+    }
     if (world) {
         world.stopGame();
     }

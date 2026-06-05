@@ -32,7 +32,7 @@
             <p class="start-button" onclick="startGame()">Start</p>
             <p class="control-button" onclick="processControlsClick()">Controls</p>
             <p class="sound-button" onclick="processSoundsClick()">Sound</p>
-            <p class="fullscreen-button" onclick="toggleFullscreen()">Fullscreen</p>
+            <p class="imprint-button" onclick="processImprintClick()">Imprint</p>
         </div>
         <div id="outroDivID" class="overlay outro dis-none">
             <img id="outroImageID" class="endscreen" src="" alt="Outro-screen">
@@ -41,6 +41,12 @@
         </div>
         <canvas id="canvasID">
         </canvas>
+        <div id="rotateDeviceOverlay" class="rotate-overlay">
+            <div class="rotate-content">
+                <img src="./img/9_intro_outro_screens/start/rotate_screen.png" alt="Please rotate your device" class="rotate-animation">
+                <p>Please rotate your device</p>
+            </div>
+        </div>
     </div>
     <script src="./script/image-config.js"></script>
     <script src="./script/drawable-objects/drawable-object.class.js"></script>
@@ -64,4 +70,5 @@
     <script src="./script/menu.js"></script>
     <script src="./script/script.js"></script>
 </body>
+
 </html>

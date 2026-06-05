@@ -1,12 +1,12 @@
 
-
 function openSettings() {
-    if (controlsWoodSign || soundsWoodSign) {
+    if (controlsWoodSign || soundsWoodSign || imprintWoodSign) {
         woodSignRef.classList.remove('visible');
         setTimeout(() => {
             openSettingsSign();
             controlsWoodSign = false;
             soundsWoodSign = false;
+            imprintWoodSign = false;
         }, 300);
     } else {
         openSettingsSign();
@@ -22,12 +22,13 @@ function openSettingsSign() {
 
 
 function processControlsClick() {
-    if (soundsWoodSign || settingsWoodSign) {
+    if (soundsWoodSign || settingsWoodSign || imprintWoodSign) {
         woodSignRef.classList.remove('visible');
         setTimeout(() => {
             openControlsSign();
             soundsWoodSign = false;
             settingsWoodSign = false;
+            imprintWoodSign = false;
         }, 300);
     } else {
         openControlsSign();
@@ -42,12 +43,13 @@ function openControlsSign() {
 }
 
 function processSoundsClick() {
-    if (controlsWoodSign || settingsWoodSign) {
+    if (controlsWoodSign || settingsWoodSign || imprintWoodSign) {
         woodSignRef.classList.remove('visible');
         setTimeout(() => {
             openSoundsSign();
             controlsWoodSign = false;
             settingsWoodSign = false;
+            imprintWoodSign = false;
         }, 300);
     } else {
         openSoundsSign();
@@ -63,6 +65,27 @@ function openSoundsSign() {
     })
     woodSignRef.classList.toggle('visible');
     soundsWoodSign = !soundsWoodSign;
+}
+
+
+function processImprintClick() {
+    if (soundsWoodSign || settingsWoodSign || controlsWoodSign) {
+        woodSignRef.classList.remove('visible');
+        setTimeout(() => {
+            openImprintSign();
+            soundsWoodSign = false;
+            settingsWoodSign = false;
+            controlsWoodSign = false;
+        }, 300);
+    } else {
+        openImprintSign();
+    }
+}
+
+function openImprintSign() {
+    imprintTemplate();
+    woodSignRef.classList.toggle('visible');
+    imprintWoodSign = !imprintWoodSign;
 }
 
 function controlsTemplate() {
@@ -86,6 +109,17 @@ function soundsTemplate() {
          </div>
          <div class="sound-controller">
              <span>Effects</span><input id="soundInputID" type="range" min="0" max="100" value="${volSettings.effects * 100}">
+         </div>`
+}
+function imprintTemplate() {
+    woodSignRef.innerHTML = `
+     <h2>Imprint</h2>
+         <div class="imprint-content">
+             <p>Game developed by Benedict Fels</p>
+             <p>email: benedictfels@example.com</p>
+             <p>phone: +49 123 456 789</p>
+             <p>Musterstraße 1, 12345 Musterstadt</p>
+             <p>icons from https://www.icon8.com</p>
          </div>`
 }
 
