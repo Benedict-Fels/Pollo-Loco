@@ -59,9 +59,6 @@ class DrawableObject {
     /** @type {boolean} Attack trigger flag prompting the canvas module to draw active offensive range layers. */
     hasAttacked;
 
-    /** @type {{x: number, y: number, width: number, height: number}} Object reference returning contextual target boxes for striking actions. */
-    attackBox;
-
     /** @type {string[]} Reference list pointing to the asset group configuration currently drawn on screen. */
     imagesToUse;
 
