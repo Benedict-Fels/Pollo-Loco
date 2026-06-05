@@ -2,17 +2,17 @@
 class Character extends DrawableObject {
     speed = 6;
     acceleration = 1.5;
-    // direction = 'right';
     facingLeft = false;
     health = 10;
     bottleInventory = 5;
     nuggets = 0;
     currentAnimationFrame = 0;
+    groundLevel = 274;
 
     constructor(world) {
         super();
         this.x = 100;
-        this.y = 264;
+        this.y = this.groundLevel;
         this.width = 100;
         this.height = 200;
         this.speedY = 0;
@@ -137,11 +137,11 @@ class Character extends DrawableObject {
         if (this.isDead) this.imagesToUse = characterImages.deadImages;
         else if (this.isHurt) {
             this.imagesToUse = characterImages.hurtImages;
-            this.applyGravity();
+            this.applyGravity(this);
         }
         else if (this.isJumping) {
             this.imagesToUse = characterImages.jumpImages;
-            this.applyGravity();
+            this.applyGravity(this);
         }
         else if (this.isThrowing) this.imagesToUse = characterImages.throwImages;
         else if (this.isAttacking) this.imagesToUse = characterImages.attackImages;

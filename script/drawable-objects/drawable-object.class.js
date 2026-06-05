@@ -52,19 +52,19 @@ class DrawableObject {
         this.setCurrentImage(imagesToUse);
     }
 
-    applyGravity() {
-        if (this.isAboveGround() || this.speedY > 0) {
+    applyGravity(entity) {
+        if (this.isAboveGround(entity) || this.speedY > 0) {
             this.y -= this.speedY;
             this.speedY -= this.acceleration;
         } else {
-            this.y = 264;
+            this.y = entity.groundLevel;
             this.speedY = 0;
             this.isJumping = false;
         }
     }
 
-    isAboveGround() {
-        return this.y < 264;
+    isAboveGround(entity) {
+        return this.y < entity.groundLevel;
     }
 
     drawAttackBox(ctx) {
